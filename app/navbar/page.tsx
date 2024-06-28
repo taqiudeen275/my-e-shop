@@ -17,15 +17,15 @@ const NavBar = () => {
   }
 
   return (
-    <div className='flex gap-4 p-4  '>
+    <div className='flex gap-4 p-4 align-middle justify-center h-[80px] '>
         <Link href='/'>home</Link>
         {status ==='loading' && <div>Loading...</div>}
         {status === 'authenticated' && <div className='flex gap-2 justify-center'>
             {/* <img className='h-[30px] rounded-2xl' src={session.user!.image} alt={session.user!.name} /> */}
              {session.user!.name}
-             <button onClick={handlesGoogeSignOut}>Signout</button>
+             <button onClick={handlesGoogeSignOut} className=' bg-red-500 p-1 rounded-sm text-white w-[70px]' >Signout</button>
              </div>}
-        {status === 'unauthenticated' && <button onClick={handlesGoogeSigning}>Signin</button>}
+        {status === 'unauthenticated' && <button onClick={handlesGoogeSigning} className='btn bg-slate-300-500 shadow-lg p-3 rounded-sm '>Signin with google</button>}
          
          
     </div>
