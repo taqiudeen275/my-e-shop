@@ -17,7 +17,7 @@ const NavigationBar = () => {
 
             <div className='flex gap-3'>
                 <Link href="#" ><ShoppingCart size="32" variant="TwoTone" /></Link>
-                <Link href="#" ><Button>Login</Button></Link>
+                <Link href="/login" ><Button>Login</Button></Link>
                 <ModeToggle />
             </div>
         </div>

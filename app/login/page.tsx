@@ -7,110 +7,17 @@ import {useRouter} from "next/navigation";
 import Link from "next/link";
 import Image from "next/image"
 import { cn } from "@/lib/utils";
+import LoginAndRegister from "./components";
 
 
 export default function SigninForm() {
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
-    const [isloading, setIsLoading] = useState(false);
     const route = useRouter();
 
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setIsLoading(true);
-
-        try {
-            const form = {email, password};
-            const response = await fetch('/api/login', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(form)
-            });
-            if (!response.ok) {
-                setError('Failed to authenticate user');
-                setIsLoading(false)
-            };
-            const data = await response.json();
-            console.log(data);
-            if (data?.token) {
-                setSuccess('Logged in successfuly')
-                route.push(`/voter/${data.id}/vote`);
-                setIsLoading(false)
-            } else {
-                setError('Failed to authenticate user');
-                setIsLoading(false)
-            }
-        } catch (err) {
-            setError('Failed to authenticate user');
-            setIsLoading(false)
-        }
-    };
-
     return (
-        <div className="h-[calc(100vh-80px)] flex items-center justify-center flex-col">
-         
-            <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input shadow-sm">
-                <h2 className="font-bold text-3xl text-neutral-800 dark:text-neutral-200">
-                Login<span className="text-blue-700"> Page</span>
-                </h2>
-                
-               
-                <form className="my-8" onSubmit={handleSubmit}>
-
-                    <LabelInputContainer className="mb-4">
-                        <Label htmlFor="email">Email</Label>
-                        <Input id="email" placeholder="Email" type="text" value={email} onChange={(e) => setEmail(e.target.value)}/>
-                    </LabelInputContainer>
-                    <LabelInputContainer className="mb-4">
-                        <Label htmlFor="password ">Password</Label>
-                        <Input id="password" placeholder="••••••••" type="password"   value={password} onChange={(e) => setPassword(e.target.value)}/>
-                    </LabelInputContainer>
-                    <LabelInputContainer className="my-4">
-                        <Label className="text-red-500 ">  {error && <p>{error}</p>}</Label>
-                        <Label className="text-green-500 ">  {success && <p>{success}</p>}</Label>
-                    </LabelInputContainer>
-
-                    <button
-                        className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
-                        type="submit"
-                    >   
-                        {isloading? <span className="flex align-center justify-center animate-spin"> <Triangle className="" /> </span> :  <span>Login</span>}
-                        <BottomGradient />
-                    </button>
-
-                    <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
-{/* 
-                        <Link href={"/voter/send-sms"} className="text-center text-blue-600">Not Recieved SMS yet? Click here</Link> <br />
-                        <Link href={"/"} className="text-center text-blue-600">Go back to the home page</Link> */}
-                </form>
-            </div>
+        <div className="h-[calc(100vh-80px)] flex items-center justify-center flex-col mt-14">
+            <LoginAndRegister />            
         </div>
     );
 }
-
-const BottomGradient = () => {
-    return (
-        <>
-            <span className="group-hover/btn:opacity-100 block transition duration-500 opacity-0 absolute h-px w-full -bottom-px inset-x-0 bg-gradient-to-r from-transparent via-cyan-500 to-transparent" />
-            <span className="group-hover/btn:opacity-100 blur-sm block transition duration-500 opacity-0 absolute h-px w-1/2 mx-auto -bottom-px inset-x-10 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
-        </>
-    );
-};
-
-const LabelInputContainer = ({
-                                 children,
-                                 className,
-                             }: {
-    children: React.ReactNode;
-    className?: string;
-}) => {
-    return (
-        <div className={cn("flex flex-col space-y-2 w-full", className)}>
-            {children}
-        </div>
-    );
-};
