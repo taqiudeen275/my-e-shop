@@ -42,7 +42,7 @@ export class DatabaseClient {
         }
     }
 
-    async isAuthenticated(cookieStore: ReadonlyRequestCookies) {
+    isAuthenticated(cookieStore: any) {
         const cookie = cookieStore.get('pb_auth');
         if (!cookie) {
             return false;

@@ -1,11 +1,26 @@
+'use client';
+
 import React from 'react'
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart } from "iconsax-react";
+import { ShoppingCart, Logout } from "iconsax-react";
 import Logo from './logo';
 import { ModeToggle } from './theme-toggler';
+import pb from '@/lib/pocketbase_client';
+import {useRouter} from "next/navigation";
+
 
 const NavigationBar = () => {
+    const router = useRouter();
+    const handleLogout = async () => {
+        try {
+            await pb.logoutUser();
+            router.replace('/login');
+        } catch (err) {
+            console.error('Error logging out:', err);
+        }
+    };
+
     return (
         <div className=" w-full flex justify-between items-center px-24 py-4">
             <Logo />
@@ -18,6 +33,7 @@ const NavigationBar = () => {
             <div className='flex gap-3'>
                 <Link href="#" ><ShoppingCart size="32" variant="TwoTone" /></Link>
                 <Link href="/login" ><Button>Login</Button></Link>
+                <Button variant="ghost" className="mx-1" onClick={handleLogout}><Logout/></Button>
                 <ModeToggle />
             </div>
         </div>

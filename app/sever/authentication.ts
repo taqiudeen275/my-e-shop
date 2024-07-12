@@ -26,10 +26,13 @@ export async function LoginUser(logindata: LoginData) {
         const { record, token } = result;
         record.token = token;
         cookies().set('pb_auth', pb.client.authStore.exportToCookie());
-        console.log(record);
-        return record;
+        const respond =  {...record, ok: true}
+        console.log(respond);
+        return respond;
+
+        
     } catch (err: any) {
-    console.log(err);
+      console.log(err);
 
         return err
     }
@@ -38,15 +41,11 @@ export async function LoginUser(logindata: LoginData) {
 export async function RegisterUser(userdata: UserData) {
   try {
     const newUser = await pb.client.collection('users').create(userdata);
-    // const authUser = await pb.authenticate(newUser.email, newUser.password);
-    const authUser= await pb.client.collection('users').authWithPassword(newUser.email, newUser.password)
-    const { record, token } = authUser;
-    record.token = token;
-    cookies().set('pb_auth', pb.client.authStore.exportToCookie());
-    console.log(authUser);
-    return authUser;
+   
+    return newUser;
   } catch (error:any) {
-    console.log(error);
-    return error;
+    // console.log(error);
+    console.log(error.originalError.data);
+    return error.originalError.data.data;
   }
 }
