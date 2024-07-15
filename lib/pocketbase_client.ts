@@ -86,6 +86,7 @@ export class DatabaseClient {
             throw new Error(err.message);
         }
     }
+    
 }
 
 export const pb = new DatabaseClient();
