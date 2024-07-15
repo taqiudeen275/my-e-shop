@@ -37,19 +37,19 @@ const LoginLoginBtn = ({userInfo}: any) => {
     const [currentpath, setPath] = useState("");
     
     useEffect(() => {
-      setPath(path)
+      // setPath(path)
       setPbCookie()
    
-      
-      
-  }, [path, setPbCookie]);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    function setPbCookie() {
+      function setPbCookie() {
     pb.client.authStore.loadFromCookie(cookies.get('pb_auth')?? "") 
     setIslogin(pb.client.authStore.isValid)
     setUser(pb.client.authStore.model);
     }
+      
+  }, [cookies, path]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
     const handleLogout = async () => {
         try {
             await pb.logoutUser();
