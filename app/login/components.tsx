@@ -93,7 +93,6 @@ function LoginForm() {
                 setIsLoading(false)
             };
             const data = await response.json();
-            console.log(data);
             if (data?.token) {
                 setSuccess('Logged in successfuly, Welcome back 😎')
                 route.push('/');

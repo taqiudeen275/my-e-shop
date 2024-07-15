@@ -30,7 +30,7 @@ export async function middleware(req: NextRequest) {
             return NextResponse.redirect(url);
         }
     }
-
+    // console.log(pb.client.authStore.model)
     // If the user is authenticated or the route is not protected, continue to the requested resource
     return NextResponse.next();
 }
