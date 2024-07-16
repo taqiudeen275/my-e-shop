@@ -28,6 +28,7 @@ export default function RootLayout({
         >
           <CookiesProvider>
             <NavigationBar />
+            
             {children}
           </CookiesProvider>
         </ThemeProvider>
