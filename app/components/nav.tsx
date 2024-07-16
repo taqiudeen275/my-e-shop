@@ -1,5 +1,6 @@
+'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "iconsax-react";
@@ -7,24 +8,44 @@ import Logo from './logo';
 import { ModeToggle } from './theme-toggler';
 import LoginLoginBtn from './log';
 import pb from '@/lib/pocketbase_client';
-import { cookies } from 'next/headers';
+import { usePathname } from 'next/navigation';
 
 
 const NavigationBar = () => {
-
-    pb.client.authStore.loadFromCookie(cookies().get('pb_auth')?.value ?? "")
-    console.log("dsfd", pb.client.authStore.model)
+    const [isOpen, setIsOpen] = useState(false);
+    const [hasScrolled, setHasScrolled] = useState(false);
+    const toggleMenu = () => {
+      setIsOpen(!isOpen);
+    };
+    const pathname = usePathname();
+    useEffect(() => {
+        if (pathname.includes("/blog/view")){
+          setHasScrolled(true);
+          }
+        const handleScroll = () => {
+          if (window.scrollY > 0 ) {
+            setHasScrolled(true);
+          } else {
+            setHasScrolled(false);
+           
+          }
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+          window.removeEventListener('scroll', handleScroll);
+        };
+      }, [pathname]);
     return (
-        <div className=" w-full flex justify-between items-center px-24 py-4">
+        <div className={`w-full flex justify-between items-center px-24 py-4 fixed top-0 z-40 ${hasScrolled ? 'bg-background/50 border-b backdrop-blur-md' : 'bg-transparent'}`}>
             <Logo />
             <div className="flex items center">
-                <Link href="#" ><Button variant={"link"}>Home</Button></Link>
-                <Link href="#" ><Button variant={"link"}>Products</Button></Link>
-                <Link href="#" ><Button variant={"link"}>About Us</Button></Link>
+                <Link href="#" ><Button className={`${hasScrolled ? 'text-foreground' : 'text-white' }`} variant={"link"}>Home</Button></Link>
+                <Link href="#" ><Button className={`${hasScrolled ? 'text-foreground' : 'text-white' }`} variant={"link"}>Products</Button></Link>
+                <Link href="#" ><Button className={`${hasScrolled ? 'text-foreground' : 'text-white' }`} variant={"link"}>About Us</Button></Link>
             </div>
             <div className='flex gap-3'>
-                <Link href="#" ><ShoppingCart size="32" variant="TwoTone" /></Link>
-                <LoginLoginBtn  userInfo={pb.client.authStore.model} />
+                <Link href="#" ><ShoppingCart className={`${hasScrolled ? 'text-foreground' : 'text-white' }`} size="32" variant="TwoTone" /></Link>
+                <LoginLoginBtn  />
                 <ModeToggle />
             </div>
         </div>

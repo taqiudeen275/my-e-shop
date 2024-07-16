@@ -28,7 +28,7 @@ interface UserProps {
     token: string,
   }
 
-const LoginLoginBtn = ({userInfo}: any) => {
+const LoginLoginBtn = () => {
   const cookies = useCookies();
   const router = useRouter();
   const path = usePathname()
