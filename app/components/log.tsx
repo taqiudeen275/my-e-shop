@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import React from "react";
-import { useState, useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import React from 'react'
+import { useState, useEffect } from 'react';
+import {useRouter, usePathname} from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Logout } from "iconsax-react";
-import pb from "@/lib/pocketbase_client";
-import { useCookies } from "next-client-cookies";
-import { AuthModel } from "pocketbase";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {  Logout } from "iconsax-react";
+import pb from '@/lib/pocketbase_client';
+import { useCookies } from 'next-client-cookies';
+import { AuthModel } from 'pocketbase';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface UserProps {
     addresses: string,
