@@ -23,13 +23,13 @@ export async function middleware(req: NextRequest) {
     //     }
     //     return;
     // }
-    if (!publicRoutes.includes(pathname)) {
-        if (!isLoggedIn && !isAdminLoggedIn) {
-            const url = req.nextUrl.clone()
-            url.pathname = '/';
-            return NextResponse.redirect(url);
-        }
-    }
+    // if (!publicRoutes.includes(pathname)) {
+    //     if (!isLoggedIn && !isAdminLoggedIn) {
+    //         const url = req.nextUrl.clone()
+    //         url.pathname = '/login';
+    //         return NextResponse.redirect(url);
+    //     }
+    // }
     // console.log(pb.client.authStore.model)
     // If the user is authenticated or the route is not protected, continue to the requested resource
     return NextResponse.next();
