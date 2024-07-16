@@ -16,7 +16,7 @@ export default function SigninForm() {
 
 
     return (
-        <div className="flex items-center justify-center flex-col mt-14">
+        <div className="flex items-center justify-center flex-col mt-24">
             <LoginAndRegister />            
         </div>
     );
