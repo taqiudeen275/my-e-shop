@@ -9,7 +9,7 @@ const ProductCard = () => {
     <>
     <div className="w-[16rem] h-[22rem] rounded-3xl overflow-hidden  bg-purple-300/50  border-purple-500/20 text-white backdrop-blur-lg relative">
             <div className="h-[14rem] w-full overflow-hidden rounded-3xl mb-3">
-            <Image src={'/boot.jpg'} width={250} height={250} className="w-full h-full object-cover transition-transform  hover:scale-[1.2]" alt="product image" />
+            <Image src={'/boot.jpg'} priority={true} width={250} height={250} className="w-full h-full object-cover transition-transform  hover:scale-[1.2]" alt="product image" />
             </div>
             <div className="bg-primary p-1 rounded-full absolute top-2 left-2 flex"><TicketDiscount /> -15%</div>
             <div className="bg-primary p-1 rounded-full absolute top-2 right-2 flex"><Heart />   </div>
