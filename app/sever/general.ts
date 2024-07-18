@@ -142,8 +142,11 @@ const relationships: { [key: string]: { [key: string]: string[] } } = {
     }
   }
 
-  
-  
+  // force loging for mobile
+export  async function logout(){
+  await setupAuth()
+  pb.client.authStore.clear()
+} 
   
   // Get functions for each collection with optional nested preloading
   // Preloading are basically collections/models related to the collection you fetched
