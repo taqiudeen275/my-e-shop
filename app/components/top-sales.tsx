@@ -1,5 +1,6 @@
-import * as React from "react"
+"use client";
 
+import React, { useEffect,useState } from 'react'
 import { Card, CardContent } from "@/components/ui/card"
 import {
   Carousel,
@@ -8,27 +9,36 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
-import ProductCard from "./card"
+import ProductCard, { ProductProps } from "./product-card"
+import { getProducts } from "../sever/general";
+import { RecordModel } from "pocketbase";
 
 export function HorizontalScroll() {
+  const [products, setProducts] = useState<RecordModel[]>([]);
+
+  useEffect(() => {
+  
+    const fetchInitialData = async () => {
+      const products = await getProducts(['images'], "isFeatured = true");
+      console.log(products);
+      setProducts(products)
+    }
+  fetchInitialData();
+  }, [])
   return (
     <Carousel
       opts={{
         align: "start",
+
       }}
-      className="w-full max-w-sm"
+      className="w-full flex justify-center"
     >
       <CarouselContent>
-        {Array.from({ length: 5 }).map((_, index) => (
-          <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-            <div className="p-1">
-              <Card>
-                <CardContent className="flex aspect-square items-center justify-center p-6">
-                <ProductCard product={} />
-                  <span className="text-3xl font-semibold">{index + 1}</span>
+        {products.map((product, index) => (
+          <CarouselItem key={index} className="basis-full md:basis-1/2 lg:basis-1/3">
+                <CardContent className="flex aspect-square items-center justify-center p-6 ">
+                <ProductCard product={product} />
                 </CardContent>
-              </Card>
-            </div>
           </CarouselItem>
         ))}
       </CarouselContent>

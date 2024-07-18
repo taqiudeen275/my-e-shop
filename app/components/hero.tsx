@@ -2,21 +2,18 @@
 import { motion } from "framer-motion";
 import React, { useEffect } from 'react'
 import { ImagesSlider } from "./image-slider";
-import ProductCard from "./card";
+import ProductCard from "./product-card";
 import { getProducts, getUsers } from "../sever/general";
+import { HorizontalScroll } from "./top-sales";
 
 const Hero = () => {
-useEffect(() => {
-  
-  const fetchInitialData = async () => {
+  // useEffect(() => {
 
-    const products = await getProducts(['images'], "isFeatured = true");
-    const users = await getUsers(['order','order_items']);
-    console.log("prdoucts", products);
-    console.log("Useers ", users);
-  }
-fetchInitialData();
-})
+  //   const fetchInitialData = async () => {
+
+  //   }
+  // fetchInitialData();
+  // })
 
   const images = [
     '1.jpg',
@@ -25,7 +22,7 @@ fetchInitialData();
     '4.jpg',
   ]
   return (
-    <ImagesSlider className="h-screen" images={images}>
+    <ImagesSlider className="h-fit" images={images}>
       <motion.div
         initial={{
           opacity: 0,
@@ -38,10 +35,10 @@ fetchInitialData();
         transition={{
           duration: 0.6,
         }}
-        className="z-50 flex flex-col items-center justify-between h-screen"
+        className="z-50 flex flex-col items-center justify-center h-fit  w-full"
       >
-        <div className="mt-20">
-          <motion.p className="font-bold text-xl md:text-6xl  bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400 py-4">
+        <div className="mt-20 pb-8">
+          <motion.p className="font-bold text-xl md:text-6xl  text-white py-4 px-4 sm:px-0">
             <span className="text-2xl">Welcome to My E-Shop</span> <br />
             Discover the Perfect Products you desire
           </motion.p>
@@ -50,11 +47,11 @@ fetchInitialData();
             <div className="absolute inset-x-0  h-px -bottom-px bg-gradient-to-r w-3/4 mx-auto from-transparent via-purple-500 to-transparent" />
           </button>
         </div>
-        <div className="px-4 p-8 backdrop-blur-sm border bg-purple-300/10 border-purple-500/20 text-white  rounded-t-3xl  max-w-screen-xl w-full">
-          <h1 className="text-2xl font-bold font-mono mb-4">Our Best Selling Products</h1>
-         <div className="flex gap-3 overflow-x-auto"> 
-       
-       </div>
+        <div className="sm:px-4 p-8 backdrop-blur-sm border bg-purple-300/10 border-purple-500/50 text-white  rounded-t-3xl  w-full">
+          <h1 className="text-xl sm:text-2xl font-bold mb-4 text-center">Our Best Selling Products</h1>
+          <div className="">
+            <HorizontalScroll />
+          </div>
         </div>
       </motion.div>
     </ImagesSlider>
