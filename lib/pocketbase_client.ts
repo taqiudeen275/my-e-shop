@@ -76,10 +76,10 @@ export class DatabaseClient {
         this.client.authStore.loadFromCookie(cookie?.value || '');
         return this.client.authStore.model ;
     }
-    async logoutUser(){
+     logoutUser(){
         try {
-            await this.client.authStore.clear();
-            document.cookie=this.client.authStore.exportToCookie({ httpOnly: false });
+            this.client.authStore.clear();
+            document.cookie = this.client.authStore.exportToCookie({ httpOnly: false });
 
         } catch (err) {
             // @ts-ignore

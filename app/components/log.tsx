@@ -10,6 +10,7 @@ import pb from '@/lib/pocketbase_client';
 import { useCookies } from 'next-client-cookies';
 import { AuthModel } from 'pocketbase';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { logout } from '../sever/general';
 
 interface UserProps {
     addresses: string,
@@ -52,7 +53,10 @@ const LoginLoginBtn = () => {
     
     const handleLogout = async () => {
         try {
-            await pb.logoutUser();
+          await logout();
+            pb.logoutUser();
+            // await pb.client.authStore.clear
+
             router.push('/login');
         } catch (err) {
             console.error('Error logging out:', err);
