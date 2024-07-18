@@ -19,7 +19,7 @@ const NavigationBar = () => {
     };
     const pathname = usePathname();
     useEffect(() => {
-        if (pathname.includes("/blog/view")){
+        if (pathname.includes("/login")){
           setHasScrolled(true);
           }
         const handleScroll = () => {

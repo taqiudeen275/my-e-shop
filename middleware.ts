@@ -4,7 +4,8 @@ import pb from './lib/pocketbase_client';
 export async function middleware(req: NextRequest) {
     const { pathname, origin } = req.nextUrl;
     // List of protected routes
-    const publicRoutes = ['/', '/admin/login', '/login'];
+    // const publicRoutes = ['/', '/admin/login', '/login', '_next/static/*', '_next/image/*'];
+    const privateRoutes: string | string[] = [];
 
     const response = NextResponse.next();
     const isLoggedIn = await pb.isAuthenticated(req.cookies as any);
@@ -23,13 +24,13 @@ export async function middleware(req: NextRequest) {
     //     }
     //     return;
     // }
-    // if (!publicRoutes.includes(pathname)) {
-    //     if (!isLoggedIn && !isAdminLoggedIn) {
-    //         const url = req.nextUrl.clone()
-    //         url.pathname = '/login';
-    //         return NextResponse.redirect(url);
-    //     }
-    // }
+    if (privateRoutes.includes(pathname)) {
+        if (!isLoggedIn && !isAdminLoggedIn) {
+            const url = req.nextUrl.clone()
+            url.pathname = '/login';
+            return NextResponse.redirect(url);
+        }
+    }
     // console.log(pb.client.authStore.model)
     // If the user is authenticated or the route is not protected, continue to the requested resource
     return NextResponse.next();
