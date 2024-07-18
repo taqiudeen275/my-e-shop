@@ -12,6 +12,29 @@ async function setupAuth() {
     }
   } 
 
+  async function createRecord(collectionName: string, record: any) {
+    try {
+      await setupAuth();
+      const respond = await pb.client.collection(collectionName).create(record);
+      return respond
+    } catch (error: any) {
+      console.error(`Error in creating ${collectionName}:`, error)
+      return error.message;
+    }
+  }
+
+  async function updateRecord(collectionName: string, record_id:string, record: any) {
+    try {
+      await setupAuth();
+      const respond = await pb.client.collection(collectionName).update(record_id, record);
+      return respond
+    } catch (error: any) {
+      console.error(`Error in updating ${collectionName}:`, error)
+      return error.message;
+    }
+  }
+  
+
 async function deleteRecord(collectionName: string, record_id:string) {
   try {
     await setupAuth();
@@ -23,27 +46,7 @@ async function deleteRecord(collectionName: string, record_id:string) {
   }
 }
 
-async function createRecord(collectionName: string, record: any) {
-  try {
-    await setupAuth();
-    const respond = await pb.client.collection(collectionName).create(record);
-    return respond
-  } catch (error: any) {
-    console.error(`Error in creating ${collectionName}:`, error)
-    return error.message;
-  }
-}
 
-async function updateRecord(collectionName: string, record_id:string, record: any) {
-  try {
-    await setupAuth();
-    const respond = await pb.client.collection(collectionName).update(record_id, record);
-    return respond
-  } catch (error: any) {
-    console.error(`Error in updating ${collectionName}:`, error)
-    return error.message;
-  }
-}
 //   collections with relationships
 const relationships: { [key: string]: { [key: string]: string[] } } = {
     users: {
@@ -62,12 +65,14 @@ const relationships: { [key: string]: { [key: string]: string[] } } = {
   }
 
   
-  async function fetchCollectionWithNestedPreload(collectionName: string, preloads: string[] = []) {
+  async function fetchCollectionWithNestedPreload(collectionName: string, preloads: string[] = [], filterQuery?: string) {
     try {
       await setupAuth()
       
       let query = pb.client.collection(collectionName).getFullList({
-        expand: preloads.join(',')
+        expand: preloads.join(','),
+        filter: filterQuery ?? "",
+        sort: '-created',
       })
   
       if (preloads.length > 0) {
@@ -142,19 +147,17 @@ const relationships: { [key: string]: { [key: string]: string[] } } = {
   
   // Get functions for each collection with optional nested preloading
   // Preloading are basically collections/models related to the collection you fetched
-  // Pocketbase only fetches the collection only without its related models so the nested  function if specified will
-  // fetch the related models/collection you want and return them directly with the collection
   // the functions below fetches all the items in those collections, with preload being optional
-  export const getUsers = (preloads: string[] = []) => fetchCollectionWithNestedPreload('users', preloads)
-  export const getAddresses = (preloads: string[] = []) => fetchCollectionWithNestedPreload('address', preloads)
-  export const getCategories = (preloads: string[] = []) => fetchCollectionWithNestedPreload('categories', preloads)
-  export const getColors = (preloads: string[] = []) => fetchCollectionWithNestedPreload('colors', preloads)
-  export const getImages = (preloads: string[] = []) => fetchCollectionWithNestedPreload('images', preloads)
-  export const getOrders = (preloads: string[] = []) => fetchCollectionWithNestedPreload('order', preloads)
-  export const getOrderItems = (preloads: string[] = []) => fetchCollectionWithNestedPreload('order_items', preloads)
-  export const getProducts = (preloads: string[] = []) => fetchCollectionWithNestedPreload('products', preloads)
-  export const getReviews = (preloads: string[] = []) => fetchCollectionWithNestedPreload('review', preloads)
-  export const getVariants = (preloads: string[] = []) => fetchCollectionWithNestedPreload('varients', preloads)
+  export const getUsers = (preloads: string[] = [], filterQuery?: string) => fetchCollectionWithNestedPreload('users', preloads, filterQuery)
+  export const getAddresses = (preloads: string[] = [], filterQuery?: string) => fetchCollectionWithNestedPreload('address', preloads, filterQuery)
+  export const getCategories = (preloads: string[] = [], filterQuery?: string) => fetchCollectionWithNestedPreload('categories', preloads, filterQuery)
+  export const getColors = (preloads: string[] = [], filterQuery?: string) => fetchCollectionWithNestedPreload('colors', preloads, filterQuery)
+  export const getImages = (preloads: string[] = [], filterQuery?: string) => fetchCollectionWithNestedPreload('images', preloads, filterQuery)
+  export const getOrders = (preloads: string[] = [], filterQuery?: string) => fetchCollectionWithNestedPreload('order', preloads, filterQuery)
+  export const getOrderItems = (preloads: string[] = [], filterQuery?: string) => fetchCollectionWithNestedPreload('order_items', preloads, filterQuery)
+  export const getProducts = (preloads: string[] = [], filterQuery?: string) => fetchCollectionWithNestedPreload('products', preloads, filterQuery)
+  export const getReviews = (preloads: string[] = [], filterQuery?: string) => fetchCollectionWithNestedPreload('review', preloads, filterQuery)
+  export const getVariants = (preloads: string[] = [], filterQuery?: string) => fetchCollectionWithNestedPreload('varients', preloads, filterQuery)
   
 // the below are similar to the above but with this one fetches one instead of a collection with nested preloads options
 export const getUserById = (id: string, preloads: string[] = []) => fetchItemWithNestedPreload('users', id, preloads)

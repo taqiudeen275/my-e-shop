@@ -10,11 +10,9 @@ useEffect(() => {
   
   const fetchInitialData = async () => {
 
-    const products = await getProducts(['images', 'colors', 'categories']);
-    const productsOnly = await getProducts();
-    const users = await getUsers(['order']);
+    const products = await getProducts(['images'], "isFeatured = true");
+    const users = await getUsers(['order','order_items']);
     console.log("prdoucts", products);
-    console.log("Products Only", productsOnly);
     console.log("Useers ", users);
   }
 fetchInitialData();
