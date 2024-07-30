@@ -9,9 +9,13 @@ const  POCKET_BASE_URL = 'http://127.0.0.1:8090';
 export class DatabaseClient {
     client: PocketBase;
     // fileBaseURL: string;
+    categoriesImageBaseURL: string;
+    productImageBaseURL: string;
     constructor () {
         this.client = new PocketBase(POCKET_BASE_URL);
+        this.categoriesImageBaseURL = `${POCKET_BASE_URL}/api/files/rk0kuf79ehkhvz5/`
         // this.fileBaseURL = `${POCKET_BASE_URL}/api/files/vopk3cx7gapqz5e/`
+        this.productImageBaseURL = `${POCKET_BASE_URL}/api/files/vopk3cx7gapqz5e/`
     }
 
     async authenticate_admin (email: string, password: string) {

@@ -61,7 +61,9 @@ const relationships: { [key: string]: { [key: string]: string[] } } = {
       images: [],
       color: [],
     },
-    // Add other relationships here as needed
+    categories: {
+      products:[]
+    }
   }
 
   
@@ -84,7 +86,6 @@ const relationships: { [key: string]: { [key: string]: string[] } } = {
               }
             }
           }
-          console.log("Results: -",results)
           return results
         })
       }
@@ -96,6 +97,7 @@ const relationships: { [key: string]: { [key: string]: string[] } } = {
     }
   }
   
+
   async function fetchNestedRelation(parentCollection: string, relation: string, ids: string | string[]) {
     const relatedCollection = pb.client.collection(relation)
     const idsArray = Array.isArray(ids) ? ids : [ids]
@@ -162,6 +164,8 @@ export  async function logout(){
   export const getReviews = (preloads: string[] = [], filterQuery?: string) => fetchCollectionWithNestedPreload('review', preloads, filterQuery)
   export const getVariants = (preloads: string[] = [], filterQuery?: string) => fetchCollectionWithNestedPreload('varients', preloads, filterQuery)
   
+// fetch collection with Pagination
+
 // the below are similar to the above but with this one fetches one instead of a collection with nested preloads options
 export const getUserById = (id: string, preloads: string[] = []) => fetchItemWithNestedPreload('users', id, preloads)
 export const getAddressById = (id: string, preloads: string[] = []) => fetchItemWithNestedPreload('address', id, preloads)
@@ -200,6 +204,21 @@ export const createOrder = (record: any) => createRecord('order', record)
 export const createAddress = (record: any) => createRecord('address', record)
 export const createOrderItem = (record: any) => createRecord('order_items', record)
 
+
+export async function fetchForProuctsPage(){
+  await setupAuth()
+  const categories = await getCategories();
+  const products = await pb.client.collection("products").getList(1, 15, {sort: '-created', expand: "images"})
+
+  const categorizedProducts = categories.map(category => {
+    return {
+      ...category,
+      products: products.items.filter(product => product.categories.includes(category.id))
+    };
+  });
+
+  return categorizedProducts;
+}
 
 // Search filters coming soon
 // I mean products page filtering operations
