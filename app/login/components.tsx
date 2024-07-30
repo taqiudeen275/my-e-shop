@@ -26,12 +26,12 @@ import { RegisterUser } from "../sever/authentication";
 export default function LoginAndRegister() {
     return (
         <Tabs defaultValue="login" className="w-[400px]">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-2 bg-background/70 backdrop-blur-md">
                 <TabsTrigger value="login">Login</TabsTrigger>
                 <TabsTrigger value="register">Register</TabsTrigger>
             </TabsList>
             <TabsContent value="login">
-                <Card>
+                <Card className="bg-background/70 backdrop-blur-md">
                     <CardHeader>
                         <CardTitle>Login</CardTitle>
                         <CardDescription>
@@ -41,11 +41,11 @@ export default function LoginAndRegister() {
                     <CardContent className="space-y-2">
                         <LoginForm />
                     </CardContent>
-
+                
                 </Card>
             </TabsContent>
             <TabsContent value="register">
-                <Card>
+                <Card className="bg-background/70 backdrop-blur-md">
                     <CardHeader>
                         <CardTitle>Register</CardTitle>
                         <CardDescription>
@@ -109,11 +109,11 @@ function LoginForm() {
 
             <LabelInputContainer className="mb-4">
                 <Label htmlFor="email">Email</Label>
-                <Input required id="email" placeholder="Email" type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Input  required className="bg-background/50" id="email" placeholder="Email" type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
             </LabelInputContainer>
             <LabelInputContainer className="mb-4">
                 <Label htmlFor="password ">Password</Label>
-                <Input required id="password" placeholder="••••••••" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                <Input className="bg-background/50" required id="password" placeholder="••••••••" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
             </LabelInputContainer>
             <LabelInputContainer className="my-4">
                 <Label className="text-green-500 ">  {success && <p>{success}</p>}</Label>
@@ -121,7 +121,7 @@ function LoginForm() {
             </LabelInputContainer>
 
             <button
-                className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
+                className="bg-gradient-to-br relative group/btn from-purple-950 to-purple-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
                 type="submit"
             >
                 {isloading ? <span className="flex align-center justify-center animate-spin"> <Triangle className="" /> </span> : <span>Login</span>}
@@ -129,6 +129,7 @@ function LoginForm() {
             </button>
 
             <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
+            
             {/* 
             <Link href={"/voter/send-sms"} className="text-center text-blue-600">Not Recieved SMS yet? Click here</Link> <br />
             <Link href={"/"} className="text-center text-blue-600">Go back to the home page</Link> */}
@@ -236,31 +237,31 @@ function RegisterForm() {
         <form className="my-8" onSubmit={handleSubmit}>
             <LabelInputContainer className="mb-4">
                 <Label htmlFor="name">Full Name</Label>
-                <Input required id="name" placeholder="Full Name" type="text" value={name} onChange={(e) => setName(e.target.value)} />
+                <Input className="bg-background/50" required id="name" placeholder="Full Name" type="text" value={name} onChange={(e) => setName(e.target.value)} />
             </LabelInputContainer>
             <LabelInputContainer className="mb-4">
                 <Label htmlFor="username">Username</Label>
-                <Input required id="username" placeholder="Username" type="text" value={username} onChange={(e) => setUSername(e.target.value)} />
+                <Input className="bg-background/50" required id="username" placeholder="Username" type="text" value={username} onChange={(e) => setUSername(e.target.value)} />
                 <Label className="text-red-500 ">  {usernameError && <p>{usernameError}</p>}</Label>
 
             </LabelInputContainer>
             <LabelInputContainer className="mb-4">
                 <Label htmlFor="email">Email</Label>
-                <Input required id="email" placeholder="Email" type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <Input className="bg-background/50" required id="email" placeholder="Email" type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
                 <Label className="text-red-500 ">  {emailError && <p>{emailError}</p>}</Label>
             </LabelInputContainer>
             <LabelInputContainer className="mb-4">
                 <Label htmlFor="phone">Phone Number</Label>
-                <Input required id="phone" placeholder="233##########" type="text" maxLength={13} value={phone} onChange={(e) => setPhone(e.target.value)} />
+                <Input className="bg-background/50" required id="phone" placeholder="233##########" type="text" maxLength={13} value={phone} onChange={(e) => setPhone(e.target.value)} />
             </LabelInputContainer>
             <LabelInputContainer className="mb-4">
                 <Label htmlFor="password ">Password</Label>
-                <Input required id="password" placeholder="••••••••" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                <Input className="bg-background/50" required id="password" placeholder="••••••••" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                 <Label className="text-red-500 ">  {passwordError && <p>{passwordError}</p>}</Label>
             </LabelInputContainer>
             <LabelInputContainer className="mb-4">
                 <Label htmlFor="passwordConfirm">Confirm Password</Label>
-                <Input required id="passwordConfirm" placeholder="••••••••" type="password" value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)} />
+                <Input className="bg-background/50" required id="passwordConfirm" placeholder="••••••••" type="password" value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)} />
                 <Label className="text-red-500 ">  {password2Error && <p>{password2Error}</p>}</Label>
             </LabelInputContainer>
             <LabelInputContainer className="my-4">
@@ -270,7 +271,7 @@ function RegisterForm() {
             </LabelInputContainer>
 
             <button
-                className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
+                className="bg-gradient-to-br relative group/btn from-purple-950 to-purple-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
                 type="submit"
             >
                 {isloading ? <span className="flex align-center justify-center animate-spin"> <Triangle className="" /> </span> : <span>Register</span>}
@@ -295,7 +296,7 @@ const BottomGradient = () => {
     );
 };
 
-const LabelInputContainer = ({
+export const LabelInputContainer = ({
     children,
     className,
 }: {
