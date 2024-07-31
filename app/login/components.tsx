@@ -1,12 +1,10 @@
 "use client";
 
 /* eslint-disable react/no-unescaped-entities */
-import { Button } from "@/components/ui/button"
 import {
     Card,
     CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
@@ -21,10 +19,8 @@ import {
 import React, { useState } from "react";
 import { Triangle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image"
 import { cn } from "@/lib/utils";
-import { LoginUser, RegisterUser } from "../sever/authentication";
+import { RegisterUser } from "../sever/authentication";
 
 
 export default function LoginAndRegister() {

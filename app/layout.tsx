@@ -4,6 +4,8 @@ import "./globals.css";
 import { ThemeProvider } from "./components/theme-provider";
 import NavigationBar from "./components/nav";
 import { CookiesProvider } from 'next-client-cookies/server';
+import Hero from "./components/hero";
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,6 +30,7 @@ export default function RootLayout({
         >
           <CookiesProvider>
             <NavigationBar />
+        <Hero />
             
             {children}
           </CookiesProvider>
