@@ -22,7 +22,7 @@ export default async function Home() {
   return (
     <>
       <Hero />
-    <main className="flex min-h-screen flex-col items-center  p-12 sm:p-24">
+    <main className="flex min-h-screen flex-col items-center overflow-x-hidden  p-12 sm:p-24">
       <section className="w-full mb-24">
         <div className="text-center text-sm sm:text-lg  space-y-4 mb-10">
           <h1 className="">Discover</h1>
