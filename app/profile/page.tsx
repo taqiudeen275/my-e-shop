@@ -46,7 +46,7 @@ export default function UserProfile() {
   return (
     <div className="w-full mx-auto pb-12 px-4 sm:px-6 lg:px-8">
       <div className="relative mb-16">
-        <div className="h-48 sm:h-72 w-full">
+        <div className="h-48 sm:h-72 w-full relative">
           <Image
             src={user?.avatar ? `${pb.client.baseUrl}/api/files/${user.collectionId}/${user.id}/${user.avatar}` : "/userdefaultpic.jpg"}
             layout="fill"

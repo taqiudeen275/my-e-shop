@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/app/components/ui/textarea'
 import { Star1 } from 'iconsax-react'
 import Footer from '@/app/components/footer'
+import ReviewComponent from '@/app/components/review'
 
 
 const ProductDetails = ({ params }: { params: { id: string } }) => {
