@@ -1,70 +1,83 @@
 import React, { useState } from 'react';
-import { Star } from "iconsax-react";
-
+import { Star1 } from "iconsax-react";
 import { createReview } from '../sever/general';
+import { LabelInputContainer } from "@/app/login/components";
+import { Textarea } from "@/app/components/ui/textarea";
 
-const ReviewComponent = () => {
-  const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState('');
 
-  const handleSubmit = async (e) => {
+interface User {
+  id: string | number;
+}
+
+interface Product {
+  id: string | number;
+}
+
+interface ReviewData {
+  user: string | number;
+  product: string | number;
+  rating: number;
+  comment: string;
+}
+
+interface ReviewComponentProps {
+  user: User;
+  product: Product;
+  onReviewSubmit: (review: ReviewData) => void;
+}
+
+const ReviewComponent: React.FC<ReviewComponentProps> = ({ user = {}, product = {}, onReviewSubmit }) => {
+  const [rating, setRating] = useState<number>(0);
+  const [review, setReview] = useState<string>('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const review = {
+    const reviewData: ReviewData = {
       user: user.id,
       product: product.id,
       rating,
-      comment
+      comment: review
     };
 
     try {
-      await createReview(review);
-      onReviewSubmit(review);
+      await createReview(reviewData);
+      onReviewSubmit(reviewData);
       setRating(0);
-      setComment('');
+      setReview('');
     } catch (error) {
       console.error('Error submitting review:', error);
     }
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-lg p-6 max-w-md mx-auto my-8">
-      <h2 className="text-2xl font-bold mb-4 text-gray-800">Write a Review</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Rating</label>
-          <div className="flex items-center">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <Star
-                key={star}
-                className={`h-8 w-8 cursor-pointer transition-colors duration-150 ${
-                  star <= rating ? 'text-yellow-400' : 'text-gray-300'
-                }`}
-                onClick={() => setRating(star)}
-              />
-            ))}
-          </div>
-        </div>
-        <div>
-          <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-1">
-            Your Review
-          </label>
-          <textarea
-            id="comment"
-            rows={4}
-            className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500"
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            placeholder="Share your thoughts about the product..."
-          ></textarea>
-        </div>
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-150"
-        >
-          Submit Review
-        </button>
-      </form>
+    <div className="col-span-5 lg:col-span-2 space-y-4">
+      <h1 className="text-xl sm:text-2xl">Your Review</h1>
+      <div className="flex gap-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Star1
+            key={star}
+            className={`cursor-pointer ${star <= rating ? 'text-yellow-400' : 'text-gray-300'}`}
+            onClick={() => setRating(star)}
+          />
+        ))}
+      </div>
+      <LabelInputContainer className="mb-4">
+        <Textarea
+          cols={6}
+          className="bg-background/50"
+          id="review"
+          placeholder="Write your review"
+          value={review}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setReview(e.target.value)}
+        />
+      </LabelInputContainer>
+      <button
+        onClick={handleSubmit}
+        className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-150"
+      >
+        Submit Review
+      </button>
     </div>
   );
 };
