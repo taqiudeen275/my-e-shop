@@ -89,6 +89,7 @@ function LoginForm() {
                 setIsLoading(false)
             };
             const data = await response.json();
+            localStorage.setItem('userId', data.id);
             if (data?.token) {
                 setSuccess('Logged in successfuly, Welcome back 😎')
                 route.push('/');
