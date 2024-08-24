@@ -30,7 +30,6 @@ export default function RootLayout({
         >
           <CookiesProvider>
             <NavigationBar />
-        <Hero />
             
             {children}
           </CookiesProvider>

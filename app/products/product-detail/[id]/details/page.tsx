@@ -22,7 +22,6 @@ const ProductDetails = ({ params }: { params: { id: string } }) => {
     useEffect(() => {
         const fetchInitialData = async () => {
             const productResponse = await getProductById(params.id, ['images',]);
-            console.log("dfdsdsfds", productResponse)
             SetProduct(productResponse);
 
 
