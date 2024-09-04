@@ -11,18 +11,7 @@ import ProductCard from '../components/product-card'
 import Footer from '../components/footer'
 
 const ProductList = () => {
-  const [categories, SetCategories] = useState<{
-    products: RecordModel[];
-    
-    collectionId: string;
-    collectionName: string;
-    expand?: {
-        [key: string]: any;
-    };
-    id: string;
-    created: string;
-    updated: string;
-}[]>([])
+  const [categories, SetCategories] = useState<RecordModel[]>([])
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -56,7 +45,7 @@ const ProductList = () => {
               <Link href={`/products/${category.id}/list-all`} className='' ><Button variant={'link'}>More</Button> </Link>
             </div>
             <div className='flex sm:flex-wrap flex-col sm:flex-row gap-5 items-center'>
-                {category.products.map(product => 
+                {category.products.map((product: RecordModel) => 
                   <div key={product.id}>
                     <ProductCard product={product} inProduct={true} />
                   </div>

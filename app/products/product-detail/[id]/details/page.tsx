@@ -6,33 +6,35 @@ import { getProductById } from "@/app/sever/general";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { LabelInputContainer } from "@/app/login/components";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/app/components/ui/textarea";
-import { Star1 } from "iconsax-react";
 import Footer from "@/app/components/footer";
-import ReviewComponent from "@/app/components/review";
+import {ReviewComponent,ReviewsList} from "@/app/components/review";
+import { ToastAction } from "@/components/ui/toast"
+import { useToast } from "@/components/ui/use-toast"
+
 
 const ProductDetails = ({ params }: { params: { id: string } }) => {
   const [product, SetProduct] = useState<RecordModel | null>();
   const router = useRouter();
   const [quantity, setQuantity] = useState(1);
-  const [review, setReview] = useState("");
-  const [user, setUser] = useState({ id: '123' });
+  const [reviewTempUpdate, setReviewTempUpdate] = useState(0);
+
+  const { toast } = useToast()
 
   useEffect(() => {
     const fetchInitialData = async () => {
       const productResponse = await getProductById(params.id, ["images"]);
-      console.log("dfdsdsfds", productResponse);
+
       SetProduct(productResponse);
     };
 
     fetchInitialData();
   }, [params.id, router]);
 
-  const handleReviewSubmit = (reviewData: ReviewData) => {
-    console.log("Review submitted:", reviewData);
-    // Here you might update your UI or send the data to a parent component
+  const handleReviewSubmit = (reviewData: any) => {
+    setReviewTempUpdate(reviewTempUpdate+1)
+    toast({
+      description: "Your review has been sent.",
+    })
   };
 
   return (
@@ -118,10 +120,14 @@ const ProductDetails = ({ params }: { params: { id: string } }) => {
             ></div>
           </div>
           <ReviewComponent
-            user={user}
-            product={product}
+            productId={product?.id ?? 'null'}
             onReviewSubmit={handleReviewSubmit}
           />
+        </div>
+        <div className="mt-12">
+        <h1 className="text-xl sm:text-2xl mb-4">Reviews </h1>
+
+        <ReviewsList productId={product?.id??"null"} updated={reviewTempUpdate} />
         </div>
       </section>
       <Footer />

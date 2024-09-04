@@ -236,3 +236,6 @@ export async function fetchForProuctsPage(){
 
 // Search filters coming soon
 // I mean products page filtering operations
+export async function ExportCookies() {
+  cookies().set('pb_auth', pb.client.authStore.exportToCookie());
+}

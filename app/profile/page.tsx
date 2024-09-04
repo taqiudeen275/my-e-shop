@@ -3,20 +3,21 @@ import React from 'react'
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import {useRouter, usePathname} from "next/navigation";
-import { PersonalInfo, DeliveryAddress, AccountSecurity } from './components';
+import { PersonalInfo, DeliveryAddress, MyOrders } from './components';
 import pb from '@/lib/pocketbase_client';
 import { useCookies } from 'next-client-cookies';
 import { AuthModel } from 'pocketbase';
-import { updateUserById } from '../sever/general';
+import { ExportCookies, updateUserById } from '../sever/general';
+import { useToast } from '@/components/ui/use-toast';
 
 
 
 export default function UserProfile() {
   const [activeTab, setActiveTab] = useState<
-    "personal" | "delivery" | "security"
+    "personal" | "delivery" | "orders"
   >("personal");
   const [user, setUser] = useState<AuthModel|null>();
-
+  const { toast } = useToast()
   const cookies = useCookies();
   const path = usePathname()
   useEffect(() => {
@@ -31,16 +32,19 @@ export default function UserProfile() {
 
   const handleUpdateUser = async (updatedData: any) => {
     if (user) {
-      console.log("user updated data", updatedData);
-      const updatedUser = await updateUserById(user.id, updatedData);
-      setUser(updatedUser);
+      const resupdatedUser = await updateUserById(user.id, updatedData);
+      await ExportCookies();      
+      setUser(resupdatedUser);
+      toast({
+        description: "User updated successfully",
+      })
     }
   };
 
   const tabContent: Record<typeof activeTab, JSX.Element> = {
     personal: <PersonalInfo user={user} onUpdate={handleUpdateUser}/>,
     delivery: <DeliveryAddress />,
-    security: <AccountSecurity />,
+    orders: <MyOrders />,
   };
 
   return (
@@ -72,7 +76,7 @@ export default function UserProfile() {
             {[
               { name: "Personal Info", key: "personal" },
               { name: "Delivery Address", key: "delivery" },
-              { name: "Account Security", key: "security" },
+              { name: "My Orders", key: "orders" },
             ].map((tab) => (
               <button
                 key={tab.key}

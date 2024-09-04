@@ -1,50 +1,56 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Star1 } from "iconsax-react";
-import { createReview } from '../sever/general';
+import { createReview, getReviews } from '../sever/general';
 import { LabelInputContainer } from "@/app/login/components";
 import { Textarea } from "@/app/components/ui/textarea";
+import { useCookies } from 'next-client-cookies';
+import { AuthModel, RecordModel } from 'pocketbase';
+import pb from '@/lib/pocketbase_client';
 
 
-interface User {
-  id: string | number;
-}
-
-interface Product {
-  id: string | number;
-}
 
 interface ReviewData {
-  user: string | number;
-  product: string | number;
+  user: AuthModel;
+  product: string | number|undefined;
   rating: number;
   comment: string;
 }
 
 interface ReviewComponentProps {
-  user: User;
-  product: Product;
+  productId: string;
   onReviewSubmit: (review: ReviewData) => void;
 }
 
-const ReviewComponent: React.FC<ReviewComponentProps> = ({ user = {}, product = {}, onReviewSubmit }) => {
+export const ReviewComponent: React.FC<ReviewComponentProps> = ({ productId,onReviewSubmit  }) => {
   const [rating, setRating] = useState<number>(0);
   const [review, setReview] = useState<string>('');
+  const [user, setUser] = useState<AuthModel|null>();
+
+  
+  const cookies = useCookies();
+  useEffect(() => {
+    // setPath(path)
+    setPbCookie()
+ 
+    function setPbCookie() {
+    pb.client.authStore.loadFromCookie(cookies.get('pb_auth')?? "") 
+  setUser(pb.client.authStore.model);
+  }}, [cookies]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+    e.preventDefault();   
     const reviewData: ReviewData = {
-      user: user.id,
-      product: product.id,
+      user: user?.id,
+      product: productId,
       rating,
       comment: review
     };
-
+    
     try {
       await createReview(reviewData);
-      onReviewSubmit(reviewData);
       setRating(0);
       setReview('');
+      onReviewSubmit(reviewData);
     } catch (error) {
       console.error('Error submitting review:', error);
     }
@@ -57,7 +63,7 @@ const ReviewComponent: React.FC<ReviewComponentProps> = ({ user = {}, product = 
         {[1, 2, 3, 4, 5].map((star) => (
           <Star1
             key={star}
-            className={`cursor-pointer ${star <= rating ? 'text-yellow-400' : 'text-gray-300'}`}
+            className={`cursor-pointer hover:text-primary ${star <= rating ? 'text-primary ' : 'text-gray-300'}`}
             onClick={() => setRating(star)}
           />
         ))}
@@ -74,7 +80,7 @@ const ReviewComponent: React.FC<ReviewComponentProps> = ({ user = {}, product = 
       </LabelInputContainer>
       <button
         onClick={handleSubmit}
-        className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-150"
+        className="w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary/90 transition-colors duration-150"
       >
         Submit Review
       </button>
@@ -82,4 +88,56 @@ const ReviewComponent: React.FC<ReviewComponentProps> = ({ user = {}, product = 
   );
 };
 
-export default ReviewComponent;
+
+
+type ReviewsListProps = {
+  productId: string;
+  updated: number;
+};
+
+export const ReviewsList: React.FC<ReviewsListProps> = ({ productId,updated }) => {
+  const [reviews, setsetReviews] = useState<RecordModel[]|null>();
+  const [selfUpdate, setSelfUpdate] = useState(0);
+  
+  useEffect(() => {
+    
+    const fetchInitialData = async () => {
+      const reviewsResponse = await getReviews([], `product="${productId}"`);
+      setSelfUpdate(updated)
+      setsetReviews(reviewsResponse);
+    };
+
+    fetchInitialData();
+   
+  }, [productId, updated]);
+
+  return (
+    <div className="space-y-4">
+      {reviews?.map((review) => (
+        <div
+          key={review.id}
+          className="p-4 border rounded-lg shadow-sm bg-white dark:bg-gray-800"
+        >
+          <div className="flex items-center">
+            {/* Render stars based on the rating */}
+            {Array.from({ length: 5 }, (_, i) => (
+              <Star1
+                key={i}
+                className={`h-5 w-5 ${
+                  i < review.rating ? 'text-primary' : 'text-gray-300'
+                }`}
+              />
+            ))}
+          </div>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            {review.comment}
+          </p>
+          <p className="mt-1 text-xs text-gray-500 dark:text-gray-500">
+            Reviewed on: {new Date(review.created).toLocaleDateString()}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+};
+
