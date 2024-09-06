@@ -34,7 +34,21 @@ async function setupAuth() {
     }
   }
   
-
+  export const updateUserPassword = async (userId: string, currentPassword: string, newPassword: string) => {
+    try {
+      await setupAuth();
+      // You'll need to implement this function in your backend to handle password updates securely
+      const response = await pb.client.collection('users').update(userId, {
+        oldPassword: currentPassword,
+        password: newPassword,
+        passwordConfirm: newPassword,
+      });
+      return response;
+    } catch (error) {
+      console.error('Error updating password:', error);
+      throw error;
+    }
+  };
 async function deleteRecord(collectionName: string, record_id:string) {
   try {
     await setupAuth();
@@ -222,3 +236,6 @@ export async function fetchForProuctsPage(){
 
 // Search filters coming soon
 // I mean products page filtering operations
+export async function ExportCookies() {
+  cookies().set('pb_auth', pb.client.authStore.exportToCookie());
+}

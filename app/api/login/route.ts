@@ -9,7 +9,7 @@ export async function POST(request: Request) {
         const result = await pb.client.collection('users').authWithPassword(email, password);
         const {record, token} = result;
         record.token = token;
-        cookies().set('pb_auth', pb.client.authStore.exportToCookie());
+        cookies().set('pb_auth', pb.client.authStore.   exportToCookie());
         
         return NextResponse.json(record);
     } catch (err: any) {
