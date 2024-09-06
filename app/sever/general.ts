@@ -73,7 +73,7 @@ const relationships: { [key: string]: { [key: string]: string[] } } = {
       varients: [],
       categories: [],
       images: [],
-      color: [],
+      colors: [],
     },
     categories: {
       products:[]
@@ -115,7 +115,7 @@ const relationships: { [key: string]: { [key: string]: string[] } } = {
   async function fetchNestedRelation(parentCollection: string, relation: string, ids: string | string[]) {
     const relatedCollection = pb.client.collection(relation)
     const idsArray = Array.isArray(ids) ? ids : [ids]
-    const items = await relatedCollection.getFullList({ filter: `id ~ "${idsArray.join('","')}"` })
+    const items = await relatedCollection.getFullList({ filter: `id ~ "${idsArray.join('"||id ?= "')}"` })
   
     // If there are nested relations, fetch them recursively
     if (relationships[parentCollection] && relationships[parentCollection][relation]) {

@@ -14,16 +14,22 @@ import { useToast } from "@/components/ui/use-toast"
 
 const ProductDetails = ({ params }: { params: { id: string } }) => {
   const [product, SetProduct] = useState<RecordModel | null>();
+  const [varient, setVarient] = useState<RecordModel | null>();
   const router = useRouter();
   const [quantity, setQuantity] = useState(1);
+  const [currentColor, setCurrentColor] = useState("");
+  const [currentVarients, setCurrentVarients] = useState("");
   const [reviewTempUpdate, setReviewTempUpdate] = useState(0);
 
   const { toast } = useToast()
 
   useEffect(() => {
     const fetchInitialData = async () => {
-      const productResponse = await getProductById(params.id, ["images"]);
+      const productResponse = await getProductById(params.id, ["images", "colors", "varients"]);
+      console.log("fgfdghf", productResponse)
 
+      productResponse?.expand?.varients && setCurrentVarients(productResponse?.expand?.varients[0]?.id)
+      productResponse?.expand?.varients && setVarient(productResponse?.expand?.varients[0])
       SetProduct(productResponse);
     };
 
@@ -56,33 +62,25 @@ const ProductDetails = ({ params }: { params: { id: string } }) => {
               <StarRating rating={product?.ratings ?? 0} /> {product?.ratings}
             </h2>
             <h1 className="text-xl sm:text-2xl ">
-              GH₵ {product?.price ?? "Product price"}
+              $ { product?.expand?.varients? varient?.price : (product?.price ?? "Product price")}
             </h1>
 
             <p className="sm:text-xl">
               <span className="px-4 py-1 bg-primary/20 rounded-md mr-2">
-                {product?.stock}
+               { product?.expand?.varients? varient?.stock : (product?.stock ?? "")}
               </span>{" "}
               left in Stock
             </p>
-            <div className="space-y-3">
+            {product?.expand?.varients && <div className="space-y-3">
               <p className="text-xl">Varients</p>
               <div className="space-x-3 flex flex-wrap">
-                <button className="bg-primary/20 border-primary border-2 px-8 py-2 rounded-full">
-                  S
-                </button>
-                <button className="bg-primary/20 px-8 py-2 rounded-full">
-                  M
-                </button>
-                <button className="bg-primary/20 px-8 py-2 rounded-full">
-                  L
-                </button>
-                <button className="bg-primary/20 px-8 py-2 rounded-full">
-                  XL
-                </button>
+                {product?.expand?.varients.map((v:any ) =>   <button key={v.id} className={`bg-primary/20 border-primary ${currentVarients === v.id ? 'border-2': ''}  px-8 py-2 rounded-full`} onClick={()=> {setCurrentVarients(v.id); setVarient(v); setQuantity(1)}}>
+                  {v.name}
+                </button>)}
+              
               </div>
-            </div>
-            <div className="space-y-3">
+            </div>}
+            {product?.colors.length > 0  &&<div className="space-y-3">
               <p className="text-xl">Colours</p>
               <div className="space-x-3">
                 <button className="bg-red-600/20 px-4 py-2 rounded-full">
@@ -95,7 +93,7 @@ const ProductDetails = ({ params }: { params: { id: string } }) => {
                   G
                 </button>
               </div>
-            </div>
+            </div>}
             <div className="flex flex-wrap gap-4">
               <div className="flex items-center gap-2">
                 QTY:{" "}
@@ -106,10 +104,14 @@ const ProductDetails = ({ params }: { params: { id: string } }) => {
                   placeholder="quantity"
                   type="number"
                   value={quantity}
+                  max={product?.expand?.varients? varient?.stock : product?.stock}
                   onChange={(e) => setQuantity(parseInt(e.target.value))}
                 />
               </div>
-              <Button>Add To Cart</Button>
+              {
+                (product?.expand?.varients? varient?.stock === 0 : product?.stock === 0)
+              ? <Button disabled>Add To Cart</Button> :  <Button>Add To Cart</Button>
+              }
               <Button variant={"outline"}>Buy Now</Button>
             </div>
           </div>
