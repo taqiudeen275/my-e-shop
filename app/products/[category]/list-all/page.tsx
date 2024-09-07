@@ -92,7 +92,7 @@ const ProductCategoryViewAll = ({
     }
     return sortedProducts;
   };
-  
+
   return (
     <>
       <div className="flex min-h-screen md:flex-none gap-5 md:gap-1 flex-wrap  p-12 pt-24 sm:p-24">

@@ -42,7 +42,7 @@ const ProductFiltter = ({ onFilterChange }) => {
                 min={1}
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value)}
-                className="w-[120px] border p-1 rounded-sm bg-transparent"
+                className="w-[120px] border border-primary p-1 rounded-sm bg-transparent"
                 placeholder="Min"
               />
               <input

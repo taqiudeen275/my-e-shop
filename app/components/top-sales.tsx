@@ -36,7 +36,7 @@ export function HorizontalScroll() {
       <CarouselContent>
         {products.map((product, index) => (
           <CarouselItem key={index} className="basis-full md:basis-1/2 lg:basis-1/3">
-                <CardContent className="flex aspect-square items-center justify-center p-6 ">
+                <CardContent className="flex aspect-square items-center justify-center p-6 w-full ">
                 <ProductCard product={product} />
                 </CardContent>
           </CarouselItem>
