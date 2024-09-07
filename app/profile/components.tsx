@@ -278,7 +278,7 @@ export const DeliveryAddress: React.FC<AddressInfoProps> = ({
         <DialogTrigger asChild>
           <Button variant="outline"  className="w-[25%]">Edit Address</Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px] overflow-y-scroll h-dvh ">
+        <DialogContent className="sm:max-w-[425px] overflow-y-scroll h-dvh  ">
           <DialogHeader>
             <DialogTitle>Edit Address</DialogTitle>
             <DialogDescription>
@@ -357,9 +357,26 @@ export const DeliveryAddress: React.FC<AddressInfoProps> = ({
   );
 };
 
+
+interface Orders {
+  id: string;
+  type: string;
+  street: string;
+  street_2: string;
+  city: string;
+  country: string;
+  zip_code: string;
+}
+
+interface AddressInfoProps {
+  orders?: Partial<Orders>;
+  onUpdate: (updatedData: Partial<Orders>) => Promise<void>;
+}
+
 export const MyOrders: React.FC = () => (
   <div>
-    <h2 className="text-lg font-medium text-gray-900">My Orders</h2>
-    {/* Add account security fields here */}
+    <h2 className="text-lg font-medium text-gray-500">My Orders</h2>
+    
+
   </div>
 );
