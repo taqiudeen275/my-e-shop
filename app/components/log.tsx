@@ -64,10 +64,10 @@ const LoginLoginBtn = () => {
     };
   return (
     <div className='flex items-center'>
-        {isLogin && <p> <Avatar>
+        {isLogin && <Link href="/profile" > <Avatar>
       <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
       <AvatarFallback>PC</AvatarFallback>
-    </Avatar></p>}
+    </Avatar></Link>}
         {isLogin ?  <Button variant="ghost" className="mx-1" onClick={handleLogout}><Logout/></Button>
                 :<Link href="/login" ><Button>Login</Button></Link>}
     </div>

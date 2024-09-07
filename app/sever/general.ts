@@ -1,7 +1,9 @@
 "use server"
 
 import pb from "@/lib/pocketbase_client"
+import { revalidatePath } from "next/cache"
 import { cookies } from "next/headers"
+import { RecordModel } from "pocketbase"
 
 
 async function setupAuth() {
@@ -73,7 +75,7 @@ const relationships: { [key: string]: { [key: string]: string[] } } = {
       varients: [],
       categories: [],
       images: [],
-      color: [],
+      colors: [],
     },
     categories: {
       products:[]
@@ -115,7 +117,7 @@ const relationships: { [key: string]: { [key: string]: string[] } } = {
   async function fetchNestedRelation(parentCollection: string, relation: string, ids: string | string[]) {
     const relatedCollection = pb.client.collection(relation)
     const idsArray = Array.isArray(ids) ? ids : [ids]
-    const items = await relatedCollection.getFullList({ filter: `id ~ "${idsArray.join('","')}"` })
+    const items = await relatedCollection.getFullList({ filter: `id ?= "${idsArray.join('"||id ?= "')}"` })
   
     // If there are nested relations, fetch them recursively
     if (relationships[parentCollection] && relationships[parentCollection][relation]) {
@@ -173,7 +175,9 @@ export  async function logout(){
   export const getColors = (preloads: string[] = [], filterQuery?: string) => fetchCollectionWithNestedPreload('colors', preloads, filterQuery)
   export const getImages = (preloads: string[] = [], filterQuery?: string) => fetchCollectionWithNestedPreload('images', preloads, filterQuery)
   export const getOrders = (preloads: string[] = [], filterQuery?: string) => fetchCollectionWithNestedPreload('order', preloads, filterQuery)
+  export const getCart = (preloads: string[] = [], filterQuery?: string) => fetchCollectionWithNestedPreload('cart', preloads, filterQuery)
   export const getOrderItems = (preloads: string[] = [], filterQuery?: string) => fetchCollectionWithNestedPreload('order_items', preloads, filterQuery)
+  export const getCartItems = (preloads: string[] = [], filterQuery?: string) => fetchCollectionWithNestedPreload('cart_item', preloads, filterQuery)
   export const getProducts = (preloads: string[] = [], filterQuery?: string) => fetchCollectionWithNestedPreload('products', preloads, filterQuery)
   export const getReviews = (preloads: string[] = [], filterQuery?: string) => fetchCollectionWithNestedPreload('review', preloads, filterQuery)
   export const getVariants = (preloads: string[] = [], filterQuery?: string) => fetchCollectionWithNestedPreload('varients', preloads, filterQuery)
@@ -187,7 +191,9 @@ export const getCategoryById = (id: string, preloads: string[] = []) => fetchIte
 export const getColorById = (id: string, preloads: string[] = []) => fetchItemWithNestedPreload('colors', id, preloads)
 export const getImageById = (id: string, preloads: string[] = []) => fetchItemWithNestedPreload('images', id, preloads)
 export const getOrderById = (id: string, preloads: string[] = []) => fetchItemWithNestedPreload('order', id, preloads)
+export const getCartById = (id: string, preloads: string[] = []) => fetchItemWithNestedPreload('cart', id, preloads)
 export const getOrderItemById = (id: string, preloads: string[] = []) => fetchItemWithNestedPreload('order_items', id, preloads)
+export const getCartItemById = (id: string, preloads: string[] = []) => fetchItemWithNestedPreload('cart_item', id, preloads)
 export const getProductById = (id: string, preloads: string[] = []) => fetchItemWithNestedPreload('products', id, preloads)
 export const getReviewById = (id: string, preloads: string[] = []) => fetchItemWithNestedPreload('review', id, preloads)
 export const getVariantById = (id: string, preloads: string[] = []) => fetchItemWithNestedPreload('varients', id, preloads)
@@ -199,6 +205,9 @@ export const deleteAddressById = (id: string) => deleteRecord('address', id)
 export const deleteOrderById = (id: string) => deleteRecord('order', id)
 export const deleteOrderItemById = (id: string) => deleteRecord('order_items', id)
 export const deleteReviewById = (id: string) => deleteRecord('review', id)
+
+export const deleteCartById = (id: string) => deleteRecord('cart', id)
+export const deleteCartItemById = (id: string) => deleteRecord('cart_item', id)
 
 // update operation
 // same here
@@ -212,11 +221,16 @@ export const updateOrderById = (id: string,  record: any) => updateRecord('order
 export const updateAddressById = (id: string,  record: any) => updateRecord('address', id, record)
 export const updateOrderItemById = (id: string,  record: any) => updateRecord('order_items', id, record)
 
+export const updateCartById = (id: string,  record: any) => updateRecord('cart', id, record)
+export const updateCartItemById = (id: string,  record: any) => updateRecord('cart_item', id, record)
+
 // Add/Create Operations
 export const createReview = (record: any) => createRecord('review', record)
 export const createOrder = (record: any) => createRecord('order', record)
 export const createAddress = (record: any) => createRecord('address', record)
 export const createOrderItem = (record: any) => createRecord('order_items', record)
+export const createCart = (record: any) => createRecord('cart', record)
+export const createCartItem = (record: any) => createRecord('cart_item', record)
 
 
 export async function fetchForProuctsPage(){
@@ -238,4 +252,133 @@ export async function fetchForProuctsPage(){
 // I mean products page filtering operations
 export async function ExportCookies() {
   cookies().set('pb_auth', pb.client.authStore.exportToCookie());
+}
+
+
+
+
+
+// Define types
+interface CartItem {
+  id: string;
+  quantity: number;
+  price: number;
+  product: string;
+  varients?: string;
+  colors?: string;
+}
+
+// interface Cart {
+//   id: string;
+//   user: string;
+//   cart_item: string[];
+//   discount: number;
+//   total: number;
+// }
+
+export async function addToCart(
+  userId: string,
+  productId: string,
+  quantity: number,
+  price: number,
+  varientId?: string,
+  colorId?: string
+) {
+  try {
+    // Authenticate as the user (you'll need to implement your auth strategy)
+    // For example: await pb.collection('users').authWithPassword(email, password);
+
+    // Check if the user has an existing cart
+    const existingCarts = await getCart(["cart_item"], `user="${userId}"`);
+    let cart: RecordModel;
+    if (existingCarts.length === 0) {
+      // Create a new cart if one doesn't exist
+      cart = await pb.client.collection('cart').create({
+        user: userId,
+        cart_item: [],
+        discount: 0,
+        total: 0,
+      });
+    } else {
+      cart = existingCarts[0];
+
+    }
+
+    // Check if the item already exists in the cart
+    
+
+
+    // const existingItems = cart.cart_item.find((ct: any) => {ct.product === productId && ct.varients === varientId && ct.colors === colorId});
+    const existingItem = cart.cart_item.find((ct: any) => {
+      if (varientId && colorId) {
+        // Both variant and color are provided
+        return ct.product === productId && ct.varients === varientId && ct.colors === colorId;
+      } else if (varientId) {
+        // Only variant is provided
+        return ct.product === productId && ct.varients === varientId ;
+      } else if (colorId) {
+        // Only color is provided
+        return ct.product === productId && ct.colors === colorId;
+      } else {
+        // Neither variant nor color is provided
+        return ct.product === productId;
+        
+      }
+    });
+    
+    
+    let cartItem: RecordModel;
+    if (existingItem === undefined) {
+      // Create a new cart item
+    console.log('I was called true')
+
+      cartItem = await createCartItem({
+        quantity,
+        price,
+        product: productId,
+        varients: varientId,
+        colors: colorId,
+      });
+    } else {
+    console.log('I was called false')
+
+      // Update existing cart item
+      cartItem = existingItem;
+    console.log('colorID==========', colorId);
+    console.log(' vARIENT==========', varientId);
+      cartItem.quantity += quantity;
+    console.log('I was called false', cartItem);
+
+      await updateCartItemById(cartItem.id, {
+        quantity: cartItem.quantity,
+      });
+    }
+
+    // Add the cart item to the cart if it's new
+    // this is the probs
+    if (cart!.cart_item.find((ct: any) => ct.id === cartItem.id) === undefined) {
+      cart.cart_item.push(cartItem);
+      await updateCartById(cart.id, {
+        cart_item: cart!.cart_item.map((ct: any) => ct.id),
+      });
+    }
+
+    // Recalculate total
+  
+   const  allCartItems = await getCart(["cart_item"], `user="${userId}"`);
+    const newTotal = allCartItems.reduce((sum:any, item: any) => sum + (item.price * item.quantity), 0);
+
+    // Update cart total
+    await updateCartById(cart.id, {
+      total: newTotal - cart.discount,
+    });
+
+    // Revalidate the cart page to reflect changes
+    // revalidatePath('/cart');
+
+    return { success: true, message: 'Item added to cart successfully' };
+  } catch (error) {
+    console.error('Error adding item to cart:', error);
+    return { success: false, message: 'Failed to add item to cart' };
+  }
 }
