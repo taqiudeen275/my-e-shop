@@ -1,58 +1,96 @@
-"use client"
-import React from 'react'
-import Image from 'next/image';
-import { useState, useEffect } from 'react';
-import {useRouter, usePathname} from "next/navigation";
-import { PersonalInfo, DeliveryAddress, MyOrders } from './components';
-import pb from '@/lib/pocketbase_client';
-import { useCookies } from 'next-client-cookies';
-import { AuthModel } from 'pocketbase';
-import { ExportCookies, updateUserById } from '../sever/general';
-import { useToast } from '@/components/ui/use-toast';
-
-
+"use client";
+import React from "react";
+import Image from "next/image";
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+import { PersonalInfo, DeliveryAddress, MyOrders } from "./components";
+import pb from "@/lib/pocketbase_client";
+import { useCookies } from "next-client-cookies";
+import { AuthModel } from "pocketbase";
+import {
+  ExportCookies,
+  getAddressById,
+  updateAddressById,
+  updateUserById,
+} from "../sever/general";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function UserProfile() {
   const [activeTab, setActiveTab] = useState<
     "personal" | "delivery" | "orders"
   >("personal");
-  const [user, setUser] = useState<AuthModel|null>();
-  const { toast } = useToast()
+  const [address, setAddress] = useState({});
+  const [user, setUser] = useState<AuthModel | null>();
+  const { toast } = useToast();
   const cookies = useCookies();
-  const path = usePathname()
+  const path = usePathname();
+
+  
   useEffect(() => {
     // setPath(path)
-    setPbCookie()
- 
-    function setPbCookie() {
-  pb.client.authStore.loadFromCookie(cookies.get('pb_auth')?? "") 
-  setUser(pb.client.authStore.model);
-  }}, [cookies, path]);
+    setPbCookie();
 
+    function setPbCookie() {
+      pb.client.authStore.loadFromCookie(cookies.get("pb_auth") ?? "");
+      setUser(pb.client.authStore.model);
+    }
+  }, [cookies, path]);
 
   const handleUpdateUser = async (updatedData: any) => {
     if (user) {
       const resupdatedUser = await updateUserById(user.id, updatedData);
-      await ExportCookies();      
+      await ExportCookies();
       setUser(resupdatedUser);
       toast({
         description: "User updated successfully",
-      })
+      });
+    }
+  };
+
+  const handelUpdatedAddress = async (updateData: any) => {
+    if (address) {
+      const resupdatedAddress = await updateAddressById(address.id, updateData);
+      setAddress(resupdatedAddress);
+      toast({
+        description: "Address updated successfully",
+      });
     }
   };
 
   const tabContent: Record<typeof activeTab, JSX.Element> = {
-    personal: <PersonalInfo user={user} onUpdate={handleUpdateUser}/>,
-    delivery: <DeliveryAddress />,
+    personal: <PersonalInfo user={user || undefined } onUpdate={handleUpdateUser} />,
+    delivery: (
+      <DeliveryAddress address={address} onUpdate={handelUpdatedAddress} />
+    ),
     orders: <MyOrders />,
   };
+
+  useEffect(() => {
+    let fncall = false;
+    const getuserAddress = async (user: any) => {
+      if (user) {
+        const addressId = user.address;
+        const items:any = await getAddressById(addressId);
+        setAddress(items);
+      }
+    };
+    if(!fncall){
+      getuserAddress(user);
+      fncall = true;
+    }
+
+  }, [user]);
 
   return (
     <div className="w-full mx-auto pb-12 px-4 sm:px-6 lg:px-8">
       <div className="relative mb-16">
         <div className="h-48 sm:h-72 w-full relative">
           <Image
-            src={user?.avatar ? `${pb.client.baseUrl}/api/files/${user.collectionId}/${user.id}/${user.avatar}` : "/userdefaultpic.jpg"}
+            src={
+              user?.avatar
+                ? `${pb.client.baseUrl}/api/files/${user.collectionId}/${user.id}/${user.avatar}`
+                : "/userdefaultpic.jpg"
+            }
             layout="fill"
             objectFit="cover"
             className="rounded-t-lg blur-sm"
@@ -61,7 +99,11 @@ export default function UserProfile() {
         </div>
         <div className="absolute bottom-0 left-8 transform translate-y-1/2">
           <Image
-            src={user?.avatar ? `${pb.client.baseUrl}/api/files/${user.collectionId}/${user.id}/${user.avatar}` : "/userdefaultpic.jpg"}
+            src={
+              user?.avatar
+                ? `${pb.client.baseUrl}/api/files/${user.collectionId}/${user.id}/${user.avatar}`
+                : "/userdefaultpic.jpg"
+            }
             width={128}
             height={128}
             className="rounded-full border-4 border-white shadow-lg"
@@ -97,5 +139,4 @@ export default function UserProfile() {
       <div className="mt-8">{tabContent[activeTab]}</div>
     </div>
   );
-};
-
+}
