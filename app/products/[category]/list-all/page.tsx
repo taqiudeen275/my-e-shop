@@ -3,10 +3,7 @@
 import Footer from "@/app/components/footer";
 import ProductCard from "@/app/components/product-card";
 import ProductFiltter from "@/app/components/product-filtter";
-import { Button } from "@/app/components/ui/button";
 import {
-  addToCart,
-  fetchForProuctsPage,
   getCategoryById,
   getProducts,
 } from "@/app/sever/general";
@@ -19,9 +16,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import pb from "@/lib/pocketbase_client";
-import Image from "next/image";
-import Link from "next/link";
 import { RecordModel } from "pocketbase";
 import React, { useEffect, useState } from "react";
 

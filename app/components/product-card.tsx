@@ -23,7 +23,6 @@ export interface ProductProps {
 }
 const ProductCard = ({ product, inProduct }: { product: RecordModel, inProduct?: boolean }) => {
   const [isAddedToCart, setIsAddedToCart] = useState(false)
-  const [varient, setVarient] = useState<RecordModel | null>();
   const cookies = useCookies();
 
  
@@ -43,11 +42,14 @@ const ProductCard = ({ product, inProduct }: { product: RecordModel, inProduct?:
 
     await addToCart( user?.id, product.id, 1, product!.price,  product.varients[0]?.id ,  product.colors[0].id
     );
+    setIsAddedToCart(true)
+    setTimeout(() => {
+      setIsAddedToCart(false)
+    }, 1500);
     
   }
   return (
     <>
-
       <div className="min-w-[15rem] max-w-[16rem] h-[22rem] rounded-3xl overflow-hidden  bg-purple-300/50  border-purple-500/20 text-white backdrop-blur-lg relative transition-all hover:ring-4 ring-primary">
         <div className="h-[14rem]    w-full overflow-hidden rounded-3xl mb-3">
           <Link href={`/products/product-detail/${product.id}/details`}>
@@ -70,7 +72,6 @@ const ProductCard = ({ product, inProduct }: { product: RecordModel, inProduct?:
           </div>
         </div>
       </div>
-
     </>
   )
 }
