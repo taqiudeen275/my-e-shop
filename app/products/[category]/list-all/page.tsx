@@ -5,6 +5,7 @@ import ProductCard from "@/app/components/product-card";
 import ProductFiltter from "@/app/components/product-filtter";
 import { Button } from "@/app/components/ui/button";
 import {
+  addToCart,
   fetchForProuctsPage,
   getCategoryById,
   getProducts,
@@ -92,6 +93,8 @@ const ProductCategoryViewAll = ({
     }
     return sortedProducts;
   };
+
+
 
   return (
     <>

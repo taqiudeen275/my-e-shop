@@ -8,7 +8,7 @@ export interface CartItemProp {
     image: string;
     color?: string;
     varient?: string;
-  }
+}
   
   const isClient = typeof window !== 'undefined';
   // Helper function to get the current cart
