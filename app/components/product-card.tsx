@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { RecordModel } from 'pocketbase';
 import pb from '@/lib/pocketbase_client';
 import Link from 'next/link';
-import { addToCart, getCart } from '@/lib/cart';
 
 
 export interface ProductProps {
@@ -22,7 +21,6 @@ export interface ProductProps {
 const ProductCard = ({ product, inProduct }: { product: RecordModel, inProduct?: boolean }) => {
   const [isAddedToCart, setIsAddedToCart] = useState(false)
   function handleAddToCart() {
-    addToCart({ id: product.id, name: product.name, price: product.price, quantity: 1, image: `${pb.client.baseUrl}/api/files/${product.expand?.images.collectionId}/${product.expand?.images.id}/${product.expand?.images.photos[0]}` })
     setIsAddedToCart(true)
     setTimeout(() => {
       setIsAddedToCart(false)

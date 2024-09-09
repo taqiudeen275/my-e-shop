@@ -12,6 +12,7 @@ import { ToastAction } from "@/components/ui/toast"
 import { useToast } from "@/components/ui/use-toast"
 import { useCookies } from "next-client-cookies";
 import pb from "@/lib/pocketbase_client";
+import { Triangle } from "iconsax-react";
 
 
 const ProductDetails = ({ params }: { params: { id: string } }) => {
@@ -24,13 +25,12 @@ const ProductDetails = ({ params }: { params: { id: string } }) => {
   const [currentColor, setCurrentColor] = useState("");
   const [currentVarients, setCurrentVarients] = useState("");
   const [reviewTempUpdate, setReviewTempUpdate] = useState(0);
+  const [isLoading, setIsLoading] = useState(false)
 
   const { toast } = useToast()
   const cookies = useCookies();
 
   useEffect(() => {
-
-  
     const fetchInitialData = async () => {
       const productResponse = await getProductById(params.id, ["images", "colors", "varients"]);
 
@@ -53,12 +53,19 @@ const ProductDetails = ({ params }: { params: { id: string } }) => {
     })
   };
   const onAddToCart = async () => {
+    setIsLoading(true);
 
     pb.client.authStore.loadFromCookie(cookies.get('pb_auth') ?? "")
     const user = pb.client.authStore.model
 
-    await addToCart(user?.id, product!.id, quantity, product!.price, varient?.id, color?.id
+    await addToCart(user?.id, product!.id, quantity, product!.price, varient?.id, color?.id,
+      varient?.name,color?.name
     );
+    toast({
+      description: "The Products has been added to cart.",
+    })
+    setIsLoading(false);
+
   }
 
   return (
@@ -129,7 +136,11 @@ const ProductDetails = ({ params }: { params: { id: string } }) => {
               </div>
               {
                 (product?.expand?.varients ? varient?.stock === 0 : product?.stock === 0)
-                  ? <Button disabled>Add To Cart</Button> : <Button onClick={onAddToCart}>Add To Cart</Button>
+                  ? <Button disabled>Add To Cart</Button> : <Button onClick={onAddToCart}>
+                     {
+              isLoading ?
+                <span className="flex align-center justify-center animate-spin"> <Triangle className="" /> </span> :
+                "Add To Cart"}</Button>
               }
             </div>
           </div>

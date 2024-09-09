@@ -45,7 +45,7 @@ const NavigationBar = () => {
                 <Link href="#" ><Button className={`${hasNoHero ? 'text-foreground' : 'text-white' }`} variant={"link"}>About Us</Button></Link>
             </div>
             <div className='hidden md:flex gap-3'>
-                <Link href="#" ><ShoppingCart className={`${hasNoHero ? 'text-foreground' : 'text-white' }`} size="32" variant="TwoTone" /></Link>
+                <Link href="/cart" ><ShoppingCart className={`${hasNoHero ? 'text-foreground' : 'text-white' }`} size="32" variant="TwoTone" /></Link>
                 <LoginLoginBtn  />
                 <ModeToggle />
             </div>
@@ -76,7 +76,7 @@ const NavigationBar = () => {
           </div>
           <div className="pt-4 pb-3 border-t border-gray-700">
             <div className="flex items-center gap-2 justify-center">
-              <Link href="#"><ShoppingCart  /></Link>
+              <Link href="/cart"><ShoppingCart  /></Link>
               <LoginLoginBtn />
               <ModeToggle />
             </div>

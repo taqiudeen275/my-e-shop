@@ -4,6 +4,7 @@ import pb from "@/lib/pocketbase_client"
 import { revalidatePath } from "next/cache"
 import { cookies } from "next/headers"
 import { RecordModel } from "pocketbase"
+import { recalculateCartTotal } from "./cart"
 
 
 async function setupAuth() {
@@ -79,7 +80,8 @@ const relationships: { [key: string]: { [key: string]: string[] } } = {
     },
     categories: {
       products:[]
-    }
+    },
+  
   }
 
   
@@ -282,7 +284,9 @@ export async function addToCart(
   quantity: number,
   price: number,
   varientId?: string,
-  colorId?: string
+  colorId?: string,
+  selected_varient_name?: string,
+  selected_color_name?: string
 ) {
   try {
     // Authenticate as the user (you'll need to implement your auth strategy)
@@ -338,6 +342,8 @@ export async function addToCart(
         product: productId,
         varients: varientId,
         colors: colorId,
+        selected_varient_name,
+        selected_color_name
       });
     } else {
     console.log('I was called false')
@@ -365,20 +371,17 @@ export async function addToCart(
 
     // Recalculate total
   
-   const  allCartItems = await getCart(["cart_item"], `user="${userId}"`);
-    const newTotal = allCartItems.reduce((sum:any, item: any) => sum + (item.price * item.quantity), 0);
-
     // Update cart total
-    await updateCartById(cart.id, {
-      total: newTotal - cart.discount,
-    });
-
+    await recalculateCartTotal(cart.id)
+    
     // Revalidate the cart page to reflect changes
     // revalidatePath('/cart');
-
+    
     return { success: true, message: 'Item added to cart successfully' };
   } catch (error) {
     console.error('Error adding item to cart:', error);
     return { success: false, message: 'Failed to add item to cart' };
   }
 }
+
+
