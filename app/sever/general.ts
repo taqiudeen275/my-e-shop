@@ -255,9 +255,6 @@ export async function ExportCookies() {
 }
 
 
-
-
-
 // Define types
 interface CartItem {
   id: string;
