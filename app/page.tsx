@@ -8,17 +8,7 @@ import FloatingButton from "./components/float-button";
 
 export default async function Home() {
 
-  const testimonials = [
-    { id: 1, name: "John Doe", content: "Great product! Highly recommended." },
-    { id: 2, name: "Jane aSmith", content: "Exfgcellent service and support." },
-    { id: 3, name: "Jane saSmith", content: "Excelleqwsqwnt service and support." },
-    { id: 4, name: "Jane sdsSmith", content: "Excellent service and support." },
-    { id: 5, name: "Jane Sddfdfmith", content: "sdfdExcellent service and support." },
-    // Add more testimonials...
-  ];
-  const handleButtonClick = () => {
-    console.log('Button clicked!');
-  };
+ 
   return (
     <>
       <Hero />

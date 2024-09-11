@@ -3,12 +3,11 @@
 import React, { useEffect, useState } from 'react'
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Menu, CloseSquare, CloseCircle, SearchNormal1 } from "iconsax-react";
+import { ShoppingCart, Menu, CloseSquare, CloseCircle, SearchNormal1, ShoppingBag } from "iconsax-react";
 import Logo from './logo';
 import { ModeToggle } from './theme-toggler';
 import LoginLoginBtn from './log';
 import { usePathname } from 'next/navigation';
-import { ShoppingCartIcon } from 'lucide-react';
 import { SearchContainer } from '../search/conponent';
 
 
@@ -48,11 +47,17 @@ const NavigationBar = () => {
             </div>
             <div className='hidden md:flex gap-3'>
             <SearchContainer/>
-                <Link href="#" ><ShoppingCart className={`${hasNoHero ? 'text-foreground' : 'text-white' }`} size="32" variant="TwoTone" /></Link>
+                <Link href="/cart" >
+                <Button variant={'link'}>
+                <ShoppingCart className={`${hasNoHero ? 'text-foreground' : 'text-white' } hover:scale-[1.1] transition-all`} size="32" variant="TwoTone" />
+                </Button>
+                </Link>
                 <LoginLoginBtn  />
                 <ModeToggle />
+
             </div>
             <div className="-mr-2 flex md:hidden">
+            <SearchContainer/>
             <Button
               variant={'default'}
               onClick={toggleMenu}
@@ -79,8 +84,7 @@ const NavigationBar = () => {
           </div>
           <div className="pt-4 pb-3 border-t border-gray-700">
             <div className="flex items-center gap-2 justify-center">
-              <SearchContainer/>
-              <Link href="#"><ShoppingCartIcon   /></Link>
+              <Link href="/cart"><ShoppingCart size="32" /></Link>
               <LoginLoginBtn />
               <ModeToggle />
             </div>

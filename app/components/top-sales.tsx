@@ -20,7 +20,6 @@ export function HorizontalScroll() {
   
     const fetchInitialData = async () => {
       const products = await getProducts(['images'], "isFeatured = true");
-      console.log(products);
       setProducts(products)
     }
   fetchInitialData();

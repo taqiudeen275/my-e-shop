@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTrigger , DialogClose} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { SearchNormal1 } from "iconsax-react";
@@ -15,11 +15,22 @@ export const SearchContainer = () => {
       router.push(`/search/${encodeURIComponent(query)}`);
     }
   }
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        handleSubmit(new Event('submit') as unknown as FormEvent<HTMLFormElement>);
+      }
+    };
+    document.addEventListener('keypress', handleKeyPress);
+    return () => document.removeEventListener('keypress', handleKeyPress);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
+  
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="w-[25%]" variant="ghost">
+        <Button className="hover:scale-[1.1] transition-all text-foreground " variant="link">
           <SearchNormal1 />
         </Button>
       </DialogTrigger>
