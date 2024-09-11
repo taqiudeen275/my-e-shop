@@ -9,19 +9,26 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import ProductCard from '../components/product-card'
 import Footer from '../components/footer'
+import { Triangle } from 'iconsax-react'
 
 const ProductList = () => {
   const [categories, SetCategories] = useState<RecordModel[]>([])
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     const fetchInitialData = async () => {
       const productResponse = await fetchForProuctsPage();
-
       SetCategories(productResponse);
     }
+    setIsLoading(true);
     fetchInitialData();
+    setIsLoading(false);
   }, []);
   return (
+    isLoading ?
+    <div className="h-screen w-screen flex justify-center items-center">
+      < span className="flex align-center justify-center animate-spin" > <Triangle className="" /> </span >
+    </div > :
     <>
     <div className='flex min-h-screen flex-col items-center  p-12 pt-24 sm:p-24'>
       <section className='w-full mt-8'>

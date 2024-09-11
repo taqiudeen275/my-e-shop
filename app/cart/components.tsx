@@ -8,7 +8,7 @@ import { CartItemProps, decreaseCartItemQuantity, increaseCartItemQuantity } fro
 import { Triangle } from "iconsax-react";
 import { useToast } from "@/components/ui/use-toast";
 
-export const CartItem = ({ cartProduct, cartId }: { cartProduct: CartItemProps, cartId: string }) => {
+export const CartItem = ({ cartProduct, cartId, onUpdate }: { cartProduct: CartItemProps; cartId: string;  onUpdate: (val:any) => void; }) => {
   const [productQuantity, setProductQuantity] = useState(cartProduct.quantity);
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false)
@@ -21,7 +21,8 @@ export const CartItem = ({ cartProduct, cartId }: { cartProduct: CartItemProps, 
       setProductQuantity(decreaseResult.newQuantity!)
       toast({
         description: decreaseResult.message,
-      })
+      });
+      onUpdate(decreaseResult.newTotal);
     } else {
       toast({
         description: decreaseResult.message,
@@ -38,7 +39,8 @@ export const CartItem = ({ cartProduct, cartId }: { cartProduct: CartItemProps, 
       setProductQuantity(increaseResult.newQuantity!);
       toast({
         description: increaseResult.message,
-      })
+      });
+      onUpdate(increaseResult.newTotal);
     } else {
       console.log(increaseResult.message);
     }

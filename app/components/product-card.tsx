@@ -7,6 +7,9 @@ import { Button } from "@/components/ui/button";
 import { RecordModel } from 'pocketbase';
 import pb from '@/lib/pocketbase_client';
 import Link from 'next/link';
+import { useToast } from '@/components/ui/use-toast';
+import { useCookies } from 'next-client-cookies';
+import { addToCart } from '../sever/general';
 
 
 export interface ProductProps {
@@ -20,11 +23,21 @@ export interface ProductProps {
 
 const ProductCard = ({ product, inProduct }: { product: RecordModel, inProduct?: boolean }) => {
   const [isAddedToCart, setIsAddedToCart] = useState(false)
-  function handleAddToCart() {
+
+  const { toast } = useToast()
+  const cookies = useCookies();
+
+  async function handleAddToCart() {
     setIsAddedToCart(true)
-    setTimeout(() => {
-      setIsAddedToCart(false)
-    }, 1500);
+    pb.client.authStore.loadFromCookie(cookies.get('pb_auth') ?? "")
+    const user = pb.client.authStore.model
+
+    await addToCart(user?.id, product.id, 1, product.price
+    );
+    toast({
+      description: "The Products has been added to cart.",
+    })
+    setIsAddedToCart(false)
   }
   return (
     <>

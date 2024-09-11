@@ -26,6 +26,8 @@ const ProductDetails = ({ params }: { params: { id: string } }) => {
   const [currentVarients, setCurrentVarients] = useState("");
   const [reviewTempUpdate, setReviewTempUpdate] = useState(0);
   const [isLoading, setIsLoading] = useState(false)
+  const [isFetchLoading, setFetchIsLoading] = useState(false)
+  
 
   const { toast } = useToast()
   const cookies = useCookies();
@@ -42,8 +44,9 @@ const ProductDetails = ({ params }: { params: { id: string } }) => {
       }
       SetProduct(productResponse);
     };
-
+    setFetchIsLoading(true)
     fetchInitialData();
+    setFetchIsLoading(false);
   }, [cookies, params.id, router]);
 
   const handleReviewSubmit = (reviewData: any) => {
@@ -69,7 +72,10 @@ const ProductDetails = ({ params }: { params: { id: string } }) => {
   }
 
   return (
-    <>
+    isFetchLoading ?
+    <div className="h-screen w-screen flex justify-center items-center">
+      < span className="flex align-center justify-center animate-spin" > <Triangle className="" /> </span >
+    </div > :   <>
       <section className=" p-12 pt-24 sm:p-24">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-16">
           <div className="col-span-5 lg:col-span-3">

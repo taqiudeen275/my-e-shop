@@ -1,4 +1,4 @@
-import {Triangle} from "lucide-react";
+import { Triangle } from "iconsax-react";
 import React from "react";
 
 export default function LoadingScreen(){

@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Triangle } from "iconsax-react";
 import { RecordModel } from "pocketbase";
 import React, { useEffect, useState } from "react";
 
@@ -28,6 +29,8 @@ const ProductCategoryViewAll = ({
   const [filteredProducts, setFilteredProducts] = useState<RecordModel[]>([]);
   const [category, setCategory] = useState("Category Name");
   const [sortBy, setSortBy] = useState("latest");
+  const [isLoading, setIsLoading] = useState(false)
+
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -40,7 +43,10 @@ const ProductCategoryViewAll = ({
       setProducts(productResponse);
       setFilteredProducts(productResponse);
     };
+    setIsLoading(true);
     fetchInitialData();
+    setIsLoading(false);
+
   }, [params.category]);
 
   const handleFilterChange = (filters: {
@@ -91,45 +97,48 @@ const ProductCategoryViewAll = ({
 
 
   return (
-    <>
-      <div className="flex min-h-screen md:flex-none gap-5 md:gap-1 flex-wrap  p-12 pt-24 sm:p-24">
-        <section className="w-[100%] md:w-[70%] ">
-          <div className="flex pr-2  justify-between">
-            <h1 className="text-2xl sm:text-2xl font-medium mb-8">
-              All {category}
-            </h1>
-            <Select onValueChange={handleSortChange} defaultValue={sortBy}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Sort By" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>products</SelectLabel>
-                  <SelectItem value="alphabetic">A-Z</SelectItem>
-                  <SelectItem value="latest">Latest</SelectItem>
-                  <SelectItem value="oldest">oldest</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex sm:flex-wrap flex-col sm:flex-row gap-5 items-center">
-            {filteredProducts.length > 0 ? (
-              filteredProducts.map((product) => (
-                <div key={product.id}>
-                  <ProductCard product={product} inProduct={true} />
-                </div>
-              ))
-            ) : (
-              <p>No Products Found</p>
-            )}
-          </div>
-        </section>
-        <section className="md:w-[300px] w-full ">
-          <ProductFiltter onFilterChange={handleFilterChange} />
-        </section>
-      </div>
-      <Footer />
-    </>
+    isLoading ?
+      <div className="h-screen w-screen flex justify-center items-center">
+        < span className="flex align-center justify-center animate-spin" > <Triangle className="" /> </span >
+      </div > : <>
+        <div className="flex min-h-screen md:flex-none gap-5 md:gap-1 flex-wrap  p-12 pt-24 sm:p-24">
+          <section className="w-[100%] md:w-[70%] ">
+            <div className="flex pr-2  justify-between">
+              <h1 className="text-2xl sm:text-2xl font-medium mb-8">
+                All {category}
+              </h1>
+              <Select onValueChange={handleSortChange} defaultValue={sortBy}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Sort By" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>products</SelectLabel>
+                    <SelectItem value="alphabetic">A-Z</SelectItem>
+                    <SelectItem value="latest">Latest</SelectItem>
+                    <SelectItem value="oldest">oldest</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex sm:flex-wrap flex-col sm:flex-row gap-5 items-center">
+              {filteredProducts.length > 0 ? (
+                filteredProducts.map((product) => (
+                  <div key={product.id}>
+                    <ProductCard product={product} inProduct={true} />
+                  </div>
+                ))
+              ) : (
+                <p>No Products Found</p>
+              )}
+            </div>
+          </section>
+          <section className="md:w-[300px] w-full ">
+            <ProductFiltter onFilterChange={handleFilterChange} />
+          </section>
+        </div>
+        <Footer />
+      </>
   );
 };
 
