@@ -8,33 +8,34 @@ import {
   useElements,
   Elements,
 } from '@stripe/react-stripe-js';
-import { CartItemProps } from '../sever/cart';
+import { CartItemProps, CartProps } from '../sever/cart';
 import pb from '@/lib/pocketbase_client';
 import Image from "next/image";
-
+import { useRouter } from 'next/navigation';
 
 const stripePromise = loadStripe("pk_test_kX3TrpOutLWrNWQBhtthK8VQ002CbVodQv");
 
 interface CheckoutFormProps {
   price: number; // Price in cents
+  cart: CartProps;
 }
 
-const CheckoutForm: React.FC<CheckoutFormProps> = ({ price }) => {
+const CheckoutForm: React.FC<CheckoutFormProps> = ({ price, cart }) => {
   const [clientSecret, setClientSecret] = useState('');
   const [isLoading, setIsLoading] = useState(false)
   const [issuccess, setIsSuccess] = useState(false)
+  const [paidFailed, setPaidFailed] = useState("")
+
   const stripe = useStripe();
   const elements = useElements();
-
+  const router = useRouter();
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
-    fetch('/api/create-payment-intent', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount: price }),
-    })
-      .then((res) => res.json())
-      .then((data) => setClientSecret(data.clientSecret));
+    async function fetchData() {
+   const responds = await createPaymentIntent(price);
+    setClientSecret(responds.clientSecret!)
+    }
+    fetchData();
   }, [price]);
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -44,7 +45,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ price }) => {
     if (!stripe || !elements) {
       return;
     }
-
     const result = await stripe.confirmCardPayment(clientSecret, {
       payment_method: {
         card: elements.getElement(CardElement)!,
@@ -52,14 +52,44 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ price }) => {
     });
 
     if (result.error) {
+      setPaidFailed(result.error.message!)
       console.log(result);
     } else {
       if (result.paymentIntent.status === 'succeeded') {
         setIsSuccess(true);
-        console.log('Payment succeeded!', result.paymentIntent);
-        // Here, you would typically call your Pocketbase backend to update the order status
+        const orderItemsPromises = cart.cart_items.map(async (cartItem) => {
+          const orderItem: any = createOrderItem({
+            product: cartItem.product.id,
+            quantity: cartItem.quantity,
+            price: cartItem.price,
+            varient: cartItem.varients?.id,
+            color: cartItem.colors?.id,
+            selected_varient_name: cartItem.selected_varient_name,
+            selected_color_name: cartItem.selected_color_name,
+          })
+          return orderItem
+        })
+        const createdOrderItems = await Promise.all(orderItemsPromises);
+      const createdOrder =  await createOrder({
+          total: cart.total ,
+          status: "Pending",
+          payment_method: result.paymentIntent.payment_method,
+          payment_status: "Paid",
+          user: cart.user,
+          order_items: createdOrderItems.map(item => item.id),
+        });
+
+
+        // delete cart item
+        const cartItemsPromises = cart.cart_items.map(async (cartItem) => {
+          return await deleteCartItemById(cartItem.id)
+        })
+         await Promise.all(cartItemsPromises);
+
+        router.push('/checkout/success');
       }
     }
+ 
     setIsLoading(false);  
 
   };
@@ -77,17 +107,21 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ price }) => {
       >
        { isLoading?  <span className="flex align-center justify-center animate-spin"> <Triangle className="" /> </span> :(issuccess?"Successfully paid": `Pay ${(price / 100).toFixed(2)}`)}
       </button>
+      <div>
+        {paidFailed && <span className="bg-red-600/60">{paidFailed}</span>}
+      </div>
     </form>
   );
 };
 
 interface StripeWrapperProps {
-  price: number; // Price in cents
+  price: number; 
+  cart: CartProps
 }
 
-const StripeWrapper: React.FC<StripeWrapperProps> = ({ price }) => (
+const StripeWrapper: React.FC<StripeWrapperProps> = ({ price, cart }) => (
   <Elements stripe={stripePromise}>
-    <CheckoutForm price={price} />
+    <CheckoutForm price={price} cart={cart} />
   </Elements>
 );
 
@@ -149,10 +183,13 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { createAddress } from '../sever/general';
+import { createAddress, createOrder, createOrderItem, deleteCartItemById } from '../sever/general';
 import { useToast } from '@/components/ui/use-toast';
 import { useCookies } from 'next-client-cookies';
 import { Triangle } from 'iconsax-react';
+import { RecordModel } from 'pocketbase';
+import { Span } from 'next/dist/trace';
+import { createPaymentIntent } from '../sever/checkout';
 
 const formSchema = z.object({
   type: z.enum(['billing', 'shipping']),

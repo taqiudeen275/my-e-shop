@@ -39,7 +39,7 @@ const Hero = () => {
       >
         <div className="mt-20 pb-8">
           <motion.p className="font-bold text-xl md:text-6xl  text-white py-4 px-4 sm:px-0">
-            <span className="text-2xl">Welcome to My E-Shop</span> <br />
+            <span className="text-2xl">Welcome to FGRTTVOUT</span> <br />
             Discover the Perfect Products you desire
           </motion.p>
           <button className="px-4 py-2 backdrop-blur-sm border bg-purple-300/10 border-purple-500/20 text-white mx-auto text-center rounded-full relative mt-4">

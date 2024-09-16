@@ -43,7 +43,7 @@ const NavigationBar = () => {
             <Logo />
             <div className="hidden md:flex items-center">
                 <Link href="/products" ><Button className={`${hasNoHero ? 'text-foreground' : 'text-white' }`} variant={"link"}>Products</Button></Link>
-                <Link href="#" ><Button className={`${hasNoHero ? 'text-foreground' : 'text-white' }`} variant={"link"}>About Us</Button></Link>
+                <Link href="/about" ><Button className={`${hasNoHero ? 'text-foreground' : 'text-white' }`} variant={"link"}>About Us</Button></Link>
             </div>
             <div className='hidden md:flex gap-3'>
             <SearchContainer/>

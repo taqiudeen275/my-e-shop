@@ -9,6 +9,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import OrderDetailPage from "./order";
+import pb from "@/lib/pocketbase_client";
+import { useCookies } from "next-client-cookies";
+import { fetchOrdertWithItemsAndProducts } from "../sever/order";
 
 interface User {
   phone: string;
@@ -177,6 +181,7 @@ interface Address {
   type: string;
   street: string;
   street_2: string;
+  state: string;
   city: string;
   country: string;
   zip_code: string;
@@ -197,6 +202,7 @@ export const DeliveryAddress: React.FC<AddressInfoProps> = ({
     street: address.street || "",
     street_2: address.street_2 || "",
     city: address.city || "",
+    state: address.state || "",
     country: address.country || "",
     zip_code: address.zip_code || "",
   });
@@ -209,9 +215,14 @@ export const DeliveryAddress: React.FC<AddressInfoProps> = ({
       street: address.street || "",
       street_2: address.street_2 || "",
       city: address.city || "",
+      state: address.state || "",
       country: address.country || "",
       zip_code: address.zip_code || "",
     });
+    const fetchInitialData = async () => {
+    }
+    fetchInitialData();
+  
   }, [address]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -262,6 +273,11 @@ export const DeliveryAddress: React.FC<AddressInfoProps> = ({
             <td className="py-3 font-medium">City</td>
             <td className="py-3 px-6">{address.city}</td>
           </tr>
+          <tr>
+            <td className="py-3 font-medium">State/Region</td>
+            <td className="py-3 px-6">{address.state}</td>
+          </tr>
+          
           <tr>
             <td className="py-3 font-medium">Country</td>
             <td className="py-3 px-6">{address.country}</td>
@@ -372,10 +388,29 @@ interface AddressInfoProps {
   onUpdate: (updatedData: Partial<Orders>) => Promise<void>;
 }
 
-export const MyOrders: React.FC = () => (
+export const MyOrders: React.FC = () => {
+  const [order, setOrder] = useState<any | null>();
+  const [changes, setChanges] = useState(0);
+  const [isLoading, setIsLoading] = useState(false)
+
+
+  const cookies = useCookies();
+
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      pb.client.authStore.loadFromCookie(cookies.get('pb_auth') ?? "")
+      const cartResponse = await fetchOrdertWithItemsAndProducts(pb.client.authStore.model?.id);
+      setOrder(cartResponse)
+      console.log(cartResponse)
+    };
+    setIsLoading(true);
+    fetchInitialData();
+    setIsLoading(false);
+  }, [cookies, changes]);
+  return (
   <div>
     <h2 className="text-lg font-medium text-gray-500">My Orders</h2>
     
-
+   {order&& <OrderDetailPage order={order}  />}
   </div>
-);
+)}

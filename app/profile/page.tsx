@@ -10,6 +10,7 @@ import { AuthModel } from "pocketbase";
 import {
   ExportCookies,
   getAddressById,
+  getAddresses,
   updateAddressById,
   updateUserById,
 } from "../sever/general";
@@ -69,9 +70,11 @@ export default function UserProfile() {
     let fncall = false;
     const getuserAddress = async (user: any) => {
       if (user) {
-        const addressId = user.address;
-        const items:any = await getAddressById(addressId);
-        setAddress(items);
+        const addressRes = await getAddresses([], `user="${user.id}"`)
+        if (addressRes.length >= 0) {
+          setAddress(addressRes[0])
+        }
+        
       }
     };
     if(!fncall){

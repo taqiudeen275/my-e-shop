@@ -103,7 +103,6 @@ export async function fetchCartWithItemsAndProducts(userId: string): Promise<Car
             discount: cartResult.discount,
             total: cartResult.total,
         };
-        console.log("cart:===================",cart.cart_items[0].product)
         return cart;
     }else{
         const cart: CartProps= {

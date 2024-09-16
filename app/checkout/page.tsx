@@ -69,7 +69,7 @@ export default function CheckoutPage() {
                 }
               </div>
               <div className="col-span-5 lg:col-span-2 p-4 space-y-6">
-                <StripeWrapper price={amount} />
+                <StripeWrapper price={amount} cart={cart!} />
                 <h1 className="text-2xl font-bold mb-4">My Order</h1>
 
                 <Table className="min-w-full divide-y divide-gray-200">

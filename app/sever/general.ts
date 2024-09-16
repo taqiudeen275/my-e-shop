@@ -52,7 +52,7 @@ async function setupAuth() {
       throw error;
     }
   };
-async function deleteRecord(collectionName: string, record_id:string) {
+async function  deleteRecord(collectionName: string, record_id:string) {
   try {
     await setupAuth();
     await pb.client.collection(collectionName).delete(record_id);
