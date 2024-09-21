@@ -13,6 +13,8 @@ import OrderDetailPage from "./order";
 import pb from "@/lib/pocketbase_client";
 import { useCookies } from "next-client-cookies";
 import { fetchOrdertWithItemsAndProducts } from "../sever/order";
+import OrderList from "./order_list";
+import { getOrders } from "../sever/general";
 
 interface User {
   phone: string;
@@ -389,7 +391,7 @@ interface AddressInfoProps {
 }
 
 export const MyOrders: React.FC = () => {
-  const [order, setOrder] = useState<any | null>();
+  const [orders, setOrders] = useState<any | null>();
   const [changes, setChanges] = useState(0);
   const [isLoading, setIsLoading] = useState(false)
 
@@ -399,9 +401,9 @@ export const MyOrders: React.FC = () => {
   useEffect(() => {
     const fetchInitialData = async () => {
       pb.client.authStore.loadFromCookie(cookies.get('pb_auth') ?? "")
-      const cartResponse = await fetchOrdertWithItemsAndProducts(pb.client.authStore.model?.id);
-      setOrder(cartResponse)
-      console.log(cartResponse)
+      const cartResponse = await getOrders([], `user='${pb.client.authStore.model?.id}'`);
+      setOrders(cartResponse)
+      console.log("jkdfngdfnkgdf",cartResponse)
     };
     setIsLoading(true);
     fetchInitialData();
@@ -411,6 +413,6 @@ export const MyOrders: React.FC = () => {
   <div>
     <h2 className="text-lg font-medium text-gray-500">My Orders</h2>
     
-   {order&& <OrderDetailPage order={order}  />}
+   {orders && <OrderList orders={orders}  />}
   </div>
 )}

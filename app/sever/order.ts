@@ -3,10 +3,10 @@ import pb from "@/lib/pocketbase_client";
 import { RecordModel } from "pocketbase";
 
 
-export async function fetchOrdertWithItemsAndProducts(userId: string): Promise<any | null> {
+export async function fetchOrdertWithItemsAndProducts( id: string): Promise<any | null> {
     try {
         // Fetch the cart for the user
-        const cartResult = await pb.client.collection('order').getFirstListItem(`user="${userId}"`, {
+        const cartResult = await pb.client.collection('order').getOne(id, {
             expand: 'order_items',
         });
 

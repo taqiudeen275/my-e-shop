@@ -81,7 +81,11 @@ const relationships: { [key: string]: { [key: string]: string[] } } = {
     categories: {
       products:[]
     },
-  
+  order:{
+    user: [],
+    address: [],
+
+  }
   }
 
   
