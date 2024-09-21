@@ -103,7 +103,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ price, cart }) => {
       <button
         type="submit"
         disabled={!stripe}
-        className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+        className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 w-full"
       >
        { isLoading?  <span className="flex align-center justify-center animate-spin"> <Triangle className="" /> </span> :(issuccess?"Successfully paid": `Pay ${(price / 100).toFixed(2)}`)}
       </button>

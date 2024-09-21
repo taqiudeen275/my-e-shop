@@ -63,19 +63,29 @@ const OrderDetailPage: React.FC<OrderDetailPageProps> = ({ order }) => {
                 <div>
                   <p className="text-sm font-medium text-gray-900">Order Items</p>
                   <ul className="mt-2 divide-y divide-gray-200">
-                    {order.order_items.map((item: { id: React.Key | null | undefined; product: { expand: { images: { collectionId: any; id: any; photos: any[]; }; }; }; selected_varient_name: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; selected_color_name: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; quantity: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; price: number; }) => (
-                      <li key={item.id} className="py-3 flex justify-between">
-                        <div className="flex items-center">
-                          <Image width={200} height={200} src={`${pb.client.baseUrl}/api/files/${item.product.expand?.images.collectionId}/${item.product.expand?.images.id}/${item.product.expand?.images.photos[0]}`} alt="Product" className="h-16 w-16 rounded-md object-cover mr-4" />
-                          <div>
-                            <p className="text-sm font-medium text-gray-900">{item.selected_varient_name}</p>
-                            <p className="text-sm text-gray-500">{item.selected_color_name}</p>
-                            <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
-                          </div>
-                        </div>
-                        <p className="text-sm font-medium text-gray-900">${item.price.toFixed(2)}</p>
-                      </li>
-                    ))}
+                    {
+                      order.order_items && order.order_items.length > 0 ? (
+
+                        order.order_items.map((item: { id: React.Key | null | undefined; product: { expand: { images: { collectionId: any; id: any; photos: any[]; }; }; }; selected_varient_name: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; selected_color_name: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; quantity: string | number | bigint | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<React.AwaitedReactNode> | null | undefined; price: number; }) => (
+                          <li key={item.id} className="py-3 flex justify-between">
+                            <div className="flex items-center">
+                              <Image width={200} height={200} src={`${pb.client.baseUrl}/api/files/${item.product.expand?.images.collectionId}/${item.product.expand?.images.id}/${item.product.expand?.images.photos[0]}`} alt="Product" className="h-16 w-16 rounded-md object-cover mr-4" />
+                              <div>
+                                <p className="text-sm font-medium text-gray-900">{item.selected_varient_name}</p>
+                                <p className="text-sm text-gray-500">{item.selected_color_name}</p>
+                                <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
+                              </div>
+                            </div>
+                            <p className="text-sm font-medium text-gray-900">${item.price.toFixed(2)}</p>
+                          </li>
+                        ))
+                      ):
+                      (
+                        <p>No Orders Found</p>
+                      )
+                      
+                    }
+
                   </ul>
                 </div>
               </div>
