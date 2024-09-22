@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import React from 'react'
 import Logo from './logo'
-import { Facebook, Whatsapp, Youtube } from 'iconsax-react'
+import { Facebook, Instagram, Whatsapp, Youtube } from 'iconsax-react'
+import { X } from 'lucide-react'
 
 const Footer = () => {
   return (
@@ -31,7 +32,8 @@ const Footer = () => {
           <div className='flex gap-3'>
           <Link href={"#"} className='hover:text-primary transition-colors'><Facebook /></Link>
           <Link href={"#"} className='hover:text-primary transition-colors'><Whatsapp /></Link>
-          <Link href={"#"} className='hover:text-primary transition-colors'><Youtube /></Link>
+          <Link href={"#"} className='hover:text-primary transition-colors'><Instagram /></Link>
+          <Link href={"#"} className='hover:text-primary transition-colors'><X /></Link>
           </div>
         </div>
       </div>
